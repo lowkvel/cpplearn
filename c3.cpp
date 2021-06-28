@@ -40,5 +40,15 @@ int main()
     cout.put(chi+1);
     cout << '\n';
 
+    //cout.setf(ios_base::fixed, ios_base::floatfield);
+    float f = 10.0 / 3.0;
+    double d = 10.0 / 3.0;
+    const float mils = 1.0e6;
+    cout << "f: " << f << " " << f * mils << " " << 10 * f * mils << endl;
+    cout << "d: " << d << " " << d * mils << " " << 10 * d * mils << endl;
+    float f1 = 2.34e+22f;
+    float f2 = f1 + 1.0f;
+    cout << f1 << " " << f2 << " " << f2 - f1 << endl;  // f2 - f1 should be 1.0f
+
     return 0;
 }
