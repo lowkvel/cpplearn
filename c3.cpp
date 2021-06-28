@@ -33,5 +33,12 @@ int main()
     cout << "0x233 in hexadecimal equals " << sixteen << " in decimal" << endl;
     //cout << hex; // base cout changing
 
+    char ch = 'M';
+    int chi = ch;
+    cout << "char " << ch << " in ASCII is " << chi << endl;
+    cout.put(ch);
+    cout.put(chi+1);
+    cout << '\n';
+
     return 0;
 }
