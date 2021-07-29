@@ -71,16 +71,36 @@ int main() {
     
     float e = 10.111111f;
     cout << "float e = " << e 
-        << "\t\t\tsizeof(float) = " << sizeof(float) << " bytes"
+        << "\t\tsizeof(float) = " << sizeof(float) << " bytes"
         << "\t\t\trangeof(float) = [" << (numeric_limits<float>::min)() << ", " << (numeric_limits<float>::max)() << "]" << endl;
 
     double f = 10.111111;
     cout << "double f = " << f 
-        << "\t\t\tsizeof(double) = " << sizeof(double) << " bytes"
+        << "\t\tsizeof(double) = " << sizeof(double) << " bytes"
         << "\t\trangeof(double) = [" << (numeric_limits<double>::min)() << ", " << (numeric_limits<double>::max)() << "]" << endl;
 
+    /*
+        char                1 bytes     [-2^7, 2^7-1]
+        unsigned char       1 bytes     [0, 2^8-1]
+    */
 
-    
+    cout << "\nchar" << endl;
+
+    char ch1 = 'a';             // the ASCII code 97 of 'a' is stored in char variable, not the 'a' itself
+    unsigned char ch1u = 'a';
+    cout << "char '" << ch1 << "' with ASCII code " << (int)ch1 
+        << "\t\tsizeof(char) = " << sizeof(char) << " bytes" 
+        << "\t\t\trangeof(char) = [" << CHAR_MIN << ", " << CHAR_MAX << "]" << endl;
+    cout << "unsigned char '" << ch1u << "' with ASCII code " << (int)ch1u 
+        << "\tsizeof(unsigned char) = " << sizeof(unsigned char) << " bytes" 
+        << "\t\trangeof(unsigned char) = [" << 0 << ", " << UCHAR_MAX << "]" << endl;
+    char ch2 = 98;              // the stored ASCII code 97 automatically transformed into 'a' in cout from iostream
+    cout << "char '" << ch2 << "' with ASCII code " << (int)ch2 
+        << "\t\tsizeof(char) = " << sizeof(char) << " bytes" 
+        << "\t\t\trangeof(char) = [" << CHAR_MIN << ", " << CHAR_MAX << "]" << endl;  
+
+
+
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
