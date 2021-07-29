@@ -108,6 +108,28 @@ int main() {
 
     cout << "\\n\t\\t\t\\\\\t\\a\t..." << endl;
 
+    /*
+        string
+
+        c style:    char str1[] = "hello";
+        cpp style:  string str2 = "hello";
+    */
+
+    cout << "\nstring" << endl;
+
+    // c style string
+    char str1[] = "hello";
+    cout << "c style string: \tchar str1[] = \"" << str1 
+    << "\" with length of " << strlen(str1)         // \0 not included
+    << " and size of " << sizeof(str1) << endl;     // \0 included
+
+
+    // cpp style string
+    string str2 = "hello";
+    cout << "cpp style string: \tstring str2 = \"" << str2 
+    << "\" with length of " << str2.length()        // \0 not included
+    << " and size of " << str2.size() << endl;      // \0 not included
+
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
