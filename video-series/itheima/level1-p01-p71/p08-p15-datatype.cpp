@@ -99,7 +99,14 @@ int main() {
         << "\t\tsizeof(char) = " << sizeof(char) << " bytes" 
         << "\t\t\trangeof(char) = [" << CHAR_MIN << ", " << CHAR_MAX << "]" << endl;  
 
+    /*
+        escape character
+        https://en.cppreference.com/w/cpp/language/escape
+    */
 
+    cout << "\nescape character" << endl;
+
+    cout << "\\n\t\\t\t\\\\\t\\a\t..." << endl;
 
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
