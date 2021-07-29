@@ -24,8 +24,8 @@ int main() {
         unsigned long long  8 bytes     [0, 2^64-1]
     */
     
-    cout << "integer" << endl;
-    
+    cout << "\nshort & int & long & long long" << endl;
+
     short a = 10;
     unsigned short au = 10;
     cout << "short a = " << a 
@@ -36,7 +36,7 @@ int main() {
         << "\trangeof(unsigned short) = [" << (numeric_limits<unsigned short>::min)() << ", " << (numeric_limits<unsigned short>::max)() << "]" << endl;
 
     int b = 10;
-    unsigned int bu = 10;
+    unsigned int bu = 10u;
     cout << "int b = " << b 
         << "\t\t\tsizeof(int) = " << sizeof(int) << " bytes" 
         << "\t\t\trangeof(int) = [" << (numeric_limits<int>::min)() << ", " << (numeric_limits<int>::max)() << "]" << endl;
@@ -44,8 +44,8 @@ int main() {
         << "\t\tsizeof(unsigned int) = " << sizeof(unsigned int) << " bytes" 
         << "\t\trangeof(unsigned int) = [" << (numeric_limits<unsigned int>::min)() << ", " << (numeric_limits<unsigned int>::max)() << "]" << endl;
     
-    long c = 10;
-    unsigned long cu = 10;
+    long c = 10l;
+    unsigned long cu = 10ul;
     cout << "long c = " << c 
         << "\t\t\tsizeof(long) = " << sizeof(long) << " bytes" 
         << "\t\t\trangeof(long) = [" << (numeric_limits<long>::min)() << ", " << (numeric_limits<long>::max)() << "]" << endl;
@@ -53,8 +53,8 @@ int main() {
         << "\t\tsizeof(unsigned long) = " << sizeof(unsigned long) << " bytes" 
         << "\t\trangeof(unsigned long) = [" << (numeric_limits<unsigned long>::min)() << ", " << (numeric_limits<unsigned long>::max)() << "]" << endl;
     
-    long long d = 10;
-    unsigned long long du = 10;
+    long long d = 10ll;
+    unsigned long long du = 10ull;
     cout << "long long d = " << d 
         << "\t\tsizeof(long long) = " << sizeof(long long) << " bytes" 
         << "\t\trangeof(long long) = [" << (numeric_limits<long long>::min)() << ", " << (numeric_limits<long long>::max)() << "]" << endl;
@@ -62,9 +62,24 @@ int main() {
         << "\tsizeof(unsigned long long) = " << sizeof(long long) << " bytes" 
         << "\trangeof(unsigned long long) = [" << (numeric_limits<unsigned long long>::min)() << ", " << (numeric_limits<unsigned long long>::max)() << "]" << endl;
     
+    /*
+        float       4 bytes     7 significant figues        +/- 3.4e +/- 38
+        double      8 bytes     15-16 significant figues    +/- 1.7e +/- 308
+    */
 
-
+    cout << "\nfloat & double" << endl;
     
+    float e = 10.111111f;
+    cout << "float e = " << e 
+        << "\t\t\tsizeof(float) = " << sizeof(float) << " bytes"
+        << "\t\t\trangeof(float) = [" << (numeric_limits<float>::min)() << ", " << (numeric_limits<float>::max)() << "]" << endl;
+
+    double f = 10.111111;
+    cout << "double f = " << f 
+        << "\t\t\tsizeof(double) = " << sizeof(double) << " bytes"
+        << "\t\trangeof(double) = [" << (numeric_limits<double>::min)() << ", " << (numeric_limits<double>::max)() << "]" << endl;
+
+
     
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
