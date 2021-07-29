@@ -130,6 +130,20 @@ int main() {
     << "\" with length of " << str2.length()        // \0 not included
     << " and size of " << str2.size() << endl;      // \0 not included
 
+    /*
+        bool                1 bytes     integer 0/1 is stored for false(0)/true(not 0)
+    */
+
+    cout << "\nbool" << endl;
+
+    bool flag1 = true;  // integer is stored for bool
+    bool flag2 = 0;     // false, 0 is stored
+    bool flag3 = 1;     // true, 1 is stored
+    bool flag4 = 2;     // true, 1 is stored
+    bool flag5 = -1;    // true, 1 is stored
+    cout << "bool flag1 = " << flag1 << " with size of " << sizeof(flag1) << " bytes" << endl;
+
+
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
