@@ -143,7 +143,21 @@ int main() {
     bool flag5 = -1;    // true, 1 is stored
     cout << "bool flag1 = " << flag1 << " with size of " << sizeof(flag1) << " bytes" << endl;
 
+    /*
+        data input
+    */
 
+    cout << "\ndata input" << endl;
+
+    int in = 0;
+    cout << "input a int: ";
+    cin >> in;
+    cout << "input = " << in << endl;
+
+    string in_str = "";
+    cout << "input a string: ";
+    cin >> in_str;
+    cout << "input = " << in_str << endl;
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
