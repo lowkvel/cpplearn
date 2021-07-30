@@ -94,6 +94,26 @@ int main() {
         i++;
     }
 
+    // break
+    for (int i = 0; i < 10; i++) {
+        if (i > 5) break;
+        cout << i << endl;
+    }
+
+    // continue
+    for (int i = 0; i < 10; i++) {
+        if (i % 2 == 0) continue;
+        cout << i << endl;
+    }
+
+    // goto
+    i = 0;
+    flag:   
+    cout << i << endl;
+    i++;
+    if (i < 10) goto flag;
+
+
 
     
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
