@@ -65,6 +65,35 @@ int main() {
             break;
     }
 
+    // while
+    int f = 0;
+    while (f < 10) {
+        cout << f << endl;
+        f++;
+    }
+    while (1) {
+        cout << f << endl;
+        f--;
+        if (f <= 0) break;
+    }
+
+    // do - while
+    do {
+        cout << f << endl;
+        f++;
+    } while (f < 10);
+
+    // for
+    for (int i = 0; i < 10; i++)
+        cout << i << endl;
+
+    int i = 0;
+    for (;;) {
+        if (i >= 10) break;
+        cout << i << endl;
+        i++;
+    }
+
 
     
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
