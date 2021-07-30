@@ -31,11 +31,14 @@ int main() {
     int a3 = 2; int b3 = --a3;              // a = 1, b = 1     first a = a - 1,    then b = a
     int a4 = 2; int b4 = a4--;              // a = 1, b = 2     first b = a,        then a = a - 1
 
+    // assignment
+    // pass
 
+    // relational
+    // pass
 
-
-
-
+    // logical
+    // pass
     
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
