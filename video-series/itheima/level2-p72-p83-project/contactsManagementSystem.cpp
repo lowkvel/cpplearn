@@ -2,23 +2,44 @@
 
 using namespace std;
 
+#define MAX_CONTACT_LIMIT 1000
+
 void showMenu();
+void addContact(struct contactBook* pcb);
+
+struct contact {
+    string name;
+    int sex;
+    int age;
+    string phone;
+    string address;
+};
+
+struct contactBook {
+    struct contact contactArr[MAX_CONTACT_LIMIT];
+    int size;
+};
 
 int main() {
 
-    showMenu();
+    struct contactBook cbook;
+    cbook.size = 0;
 
     // options selected by user, initiated to 0
     int option = 0;
 
     // main loop
     while (true) {
+        
+        // show menu
+        showMenu();
 
         // get the option
         cin >> option;
 
         switch (option) {
-            case 1:     // add
+            case 1:     // 
+                addContact(&cbook);
                 break;
             case 2:     // show
                 showMenu();
@@ -55,4 +76,65 @@ void showMenu() {
     cout << "5. modify a contact" << endl;
     cout << "6. clear all contacts" << endl;
     cout << "0. quit" << endl;
+}
+
+void addContact(struct contactBook* pcb) {
+
+    // check for max contact limit
+    if (pcb->size >= MAX_CONTACT_LIMIT) {
+        cout << "max contact limit reached" << endl;
+        return;
+    } else {
+        // name
+        string name = "";
+        cout << "input name: ";
+        cin >> name;
+        pcb->contactArr[pcb->size].name = name;
+
+        // sex
+        int sex = 0;
+        while (true) {
+            cout << "input sex [1-male, 2-female]: ";
+            cin >> sex;
+
+            if (sex == 1 || sex == 2) {
+                pcb->contactArr[pcb->size].sex = sex;
+                break;
+            } else
+                cout << "invalid sex" << endl;
+        }
+
+        // age
+        int age = 0;
+        while (true) {
+            cout << "input age: ";
+            cin >> age;
+
+            if (age >= 0 && age <= 150) {
+                pcb->contactArr[pcb->size].age = age;
+                break;
+            } else
+                cout << "invalid age" << endl;
+        }
+
+        // phone
+        string phone = "";
+        cout << "input phone: ";
+        cin >> phone;
+        pcb->contactArr[pcb->size].phone = phone;
+
+        // address
+        string address = "";
+        cout << "input address: ";
+        cin >> address;
+        pcb->contactArr[pcb->size].address = address;
+
+        // comments
+        system("clear");
+        cout << "new contact added!" << endl;
+
+        // increment the array size by 1
+        pcb->size ++;
+    }
+
 }
