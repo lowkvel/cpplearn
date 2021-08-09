@@ -6,6 +6,7 @@ using namespace std;
 
 void showMenu();
 void addContact(struct contactBook* pcb);
+void displayContact(const struct contactBook* pcb);
 
 struct contact {
     string name;
@@ -22,8 +23,8 @@ struct contactBook {
 
 int main() {
 
-    struct contactBook cbook;
-    cbook.size = 0;
+    struct contactBook cb;
+    cb.size = 0;
 
     // options selected by user, initiated to 0
     int option = 0;
@@ -35,14 +36,15 @@ int main() {
         showMenu();
 
         // get the option
+        cout << "input an option: ";
         cin >> option;
 
         switch (option) {
-            case 1:     // 
-                addContact(&cbook);
+            case 1:     // add
+                addContact(&cb);
                 break;
-            case 2:     // show
-                showMenu();
+            case 2:     // display
+                displayContact(&cb);
                 break;
             case 3:     // delete
                 break;
@@ -69,8 +71,9 @@ int main() {
 }
 
 void showMenu() {
+    cout << endl;
     cout << "1. add a contact" << endl;
-    cout << "2. show all contacts" << endl;
+    cout << "2. display all contacts" << endl;
     cout << "3. delete a contact" << endl;
     cout << "4. find a contact" << endl;
     cout << "5. modify a contact" << endl;
@@ -136,5 +139,23 @@ void addContact(struct contactBook* pcb) {
         // increment the array size by 1
         pcb->size ++;
     }
+}
 
+void displayContact(const struct contactBook* pcb) {
+
+    if (pcb->size <= 0) {
+        cout << "no contact yet" << endl;
+        return;
+    }
+
+    for (int i = 0; i < pcb->size; i++) {
+        cout << "name: " << pcb->contactArr[i].name
+            << "\tsex: " << (pcb->contactArr[i].sex == 1 ? "male" : "female")
+            << "\tage: " << pcb->contactArr[i].age
+            << "\tphone: " << pcb->contactArr[i].phone
+            << "\taddress: " << pcb->contactArr[i].address << endl;
+    }
+
+    // comments
+    cout << "all contact shown!" << endl;
 }
