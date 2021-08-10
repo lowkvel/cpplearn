@@ -7,6 +7,9 @@ using namespace std;
 void showMenu();
 void addContact(struct contactBook* pcb);
 void displayContact(const struct contactBook* pcb);
+void deleteContact(struct contactBook* pcb);
+int isExist(const struct contactBook* pcb, string s);
+void findContact(const struct contactBook* pcb);
 
 struct contact {
     string name;
@@ -47,8 +50,10 @@ int main() {
                 displayContact(&cb);
                 break;
             case 3:     // delete
+                deleteContact(&cb);
                 break;
             case 4:     // find
+                findContact(&cb);
                 break;
             case 5:     // modify
                 break;
@@ -158,4 +163,57 @@ void displayContact(const struct contactBook* pcb) {
 
     // comments
     cout << "all contact shown!" << endl;
+}
+
+int isExist(const struct contactBook* pcb, string s) {
+    for (int i = 0; i < pcb->size; i++)
+        if (pcb->contactArr[i].name == s)
+            return i;
+    return -1;
+}
+
+void deleteContact(struct contactBook* pcb) {
+
+    // empty contact book
+    if (pcb->size <= 0) {
+        cout << "nothing to delete" << endl;
+        return;
+    } else {
+        string name = "";
+        cout << "input name to delete: ";
+        cin >> name;
+
+        // find location of the name
+        int location = 0;
+        location = isExist(pcb, name);
+        if (location == -1) {
+            cout << "deletion failed, contact not found" << endl;
+            return;
+        } else {
+            for (int i = location; i < pcb->size; i++)
+                pcb->contactArr[i] = pcb->contactArr[i+1];
+            pcb->size --;
+            cout << "deletion successful" << endl;
+        }
+    }
+}
+
+void findContact(const struct contactBook* pcb) {
+    string name = "";
+    cout << "input name to find: ";
+    cin >> name;
+
+    int location = 0;
+    location = isExist(pcb, name);
+    if (location == -1) {
+        cout << "contact not found";
+        return;
+    } else {
+        cout << "name: " << pcb->contactArr[location].name
+            << "\tsex: " << (pcb->contactArr[location].sex == 1 ? "male" : "female")
+            << "\tage: " << pcb->contactArr[location].age
+            << "\tphone: " << pcb->contactArr[location].phone
+            << "\taddress: " << pcb->contactArr[location].address << endl;
+        cout << "contact found" << endl;
+    }
 }
