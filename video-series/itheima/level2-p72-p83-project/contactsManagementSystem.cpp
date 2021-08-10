@@ -10,6 +10,8 @@ void displayContact(const struct contactBook* pcb);
 void deleteContact(struct contactBook* pcb);
 int isExist(const struct contactBook* pcb, string s);
 void findContact(const struct contactBook* pcb);
+void modifyContact(struct contactBook* pcb);
+void clearContact(struct contactBook* pcb);
 
 struct contact {
     string name;
@@ -56,8 +58,10 @@ int main() {
                 findContact(&cb);
                 break;
             case 5:     // modify
+                modifyContact(&cb);
                 break;
             case 6:     // clear
+                clearContact(&cb);
                 break;
             case 0:     // quit
                 cout << "quitted" << endl;
@@ -216,4 +220,69 @@ void findContact(const struct contactBook* pcb) {
             << "\taddress: " << pcb->contactArr[location].address << endl;
         cout << "contact found" << endl;
     }
+}
+
+void modifyContact(struct contactBook* pcb) {
+    string name = "";
+    cout << "input name to modify: ";
+    cin >> name;
+
+    int location = 0;
+    location = isExist(pcb, name);
+    if (location == -1) {
+        cout << "contact not found";
+        return;
+    } else {
+        
+        // name
+        string name = "";
+        cout << "input name: ";
+        cin >> name;
+        pcb->contactArr[location].name = name;
+
+        // sex
+        int sex = 0;
+        while (true) {
+            cout << "input sex [1-male, 2-female]: ";
+            cin >> sex;
+
+            if (sex == 1 || sex == 2) {
+                pcb->contactArr[location].sex = sex;
+                break;
+            } else
+                cout << "invalid sex" << endl;
+        }
+
+        // age
+        int age = 0;
+        while (true) {
+            cout << "input age: ";
+            cin >> age;
+
+            if (age >= 0 && age <= 150) {
+                pcb->contactArr[location].age = age;
+                break;
+            } else
+                cout << "invalid age" << endl;
+        }
+
+        // phone
+        string phone = "";
+        cout << "input phone: ";
+        cin >> phone;
+        pcb->contactArr[location].phone = phone;
+
+        // address
+        string address = "";
+        cout << "input address: ";
+        cin >> address;
+        pcb->contactArr[location].address = address;
+
+        cout << "contact modified" << endl;
+    }
+}
+
+void clearContact(struct contactBook* pcb) {
+    pcb->size = 0;
+    cout << "contact book cleared" << endl;
 }
