@@ -39,6 +39,26 @@ class Student {
     }
 };
 
+class Person {
+
+public:
+    string name;
+
+protected:
+    string car;
+
+private:
+    string password;
+
+public:
+    void initiate() {
+        name = "Alice";
+        car = "bmw";
+        password = "111";
+    }
+
+};
+
 // p99-p105, object encapsulation
 int main() {
 
@@ -50,8 +70,8 @@ int main() {
         class class_name() {
             // access control
             public:             // access allowed within class, access allowed outside class
-            protected:          // access allowed within class, access disallowed outside class
-            private:            // access allowed within class, access disallowed outside class
+            protected:          // access allowed within class and inherited class, access disallowed outside class 
+            private:            // access allowed within class, access disallowed outside class and inherited class
 
             // property
             variable_type variable_name;
@@ -76,6 +96,13 @@ int main() {
     s1.setId(1);
     s1.setName("Alice");
     s1.showStudent();
+
+    // instantiate a Person object p1 and try some access control
+    Person p1;
+    p1.initiate();
+    cout << p1.name << endl;
+    //cout << p1.car << endl;         // protected, outside of class Person, inaccessible
+    //cout << p1.password << endl;    // private, outside of class Person, inaccessible
 
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
