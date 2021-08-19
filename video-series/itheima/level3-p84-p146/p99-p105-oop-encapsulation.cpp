@@ -59,6 +59,14 @@ public:
 
 };
 
+class TempC {
+    int number;     // access control is set to private by default
+};
+
+struct TempS {
+    int number;     // access control is set to public by default
+};
+
 // p99-p105, object encapsulation
 int main() {
 
@@ -84,6 +92,9 @@ int main() {
             ...
         }
 
+        struct:     access control is set to public by default if not explictly declared
+        class:      access control is set to private by default if not explictly declared
+
     */
 
     // instantiate a Circle object c1 and calculate its circumference given radius
@@ -104,6 +115,11 @@ int main() {
     //cout << p1.car << endl;         // protected, outside of class Person, inaccessible
     //cout << p1.password << endl;    // private, outside of class Person, inaccessible
 
+    // struct and class
+    TempC tc1;
+    //cout << tc1.number << endl;     // private by default, outside of class TempC, inaccessible
+    TempS ts1;
+    cout << ts1.number << endl; 
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
