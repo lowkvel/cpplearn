@@ -1,46 +1,13 @@
 #include <iostream>
 #include <math.h>
 
+#include "p99-p105-oop-encapsulation-ex2-circle.h"
+#include "p99-p105-oop-encapsulation-ex2-point.h"
+
 using namespace std;
 
-class Circle {
-private:
-    double centerx;
-    double centery;
-    double radius;
-
-public:
-    void setCenterx(double x) {
-        centerx = x;
-    }
-    double getCenterx() {
-        return centerx;
-    }
-    void setCentery(double y) {
-        centery = y;
-    }
-    double getCentery() {
-        return centery;
-    }
-    void setRadius(double r) {
-        radius = r;
-    }
-    double getRadius() {
-        return radius;
-    }
-
-    string checkLocation(double x, double y) {
-        double distancep = 0;
-        distancep = pow((centerx - x), 2) + pow((centery - y), 2);
-        
-        if (distancep == pow(radius, 2))
-            return "on circle";
-        else if (distancep > radius)
-            return "outside circle";
-        else
-            return "inside circle";
-    }
-};
+// build command:
+// /usr/bin/clang++ -std=c++11 -g p99-p105-oop-encapsulation-ex2.cpp p99-p105-oop-encapsulation-ex2-circle.cpp p99-p105-oop-encapsulation-ex2-point.cpp -o p99-p105-oop-encapsulation-ex2
 
 // p99-p105, object encapsulation ex2
 int main() {
@@ -56,7 +23,7 @@ int main() {
     c.setCentery(0);
     c.setRadius(1);
 
-    cout << c.checkLocation(1, 1) << endl;
+    cout << c.checkLocation(0.1, 1) << endl;
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
