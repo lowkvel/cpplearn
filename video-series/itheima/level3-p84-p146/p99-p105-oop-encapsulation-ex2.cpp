@@ -18,12 +18,18 @@ int main() {
         object encapsulation ex2
     */
 
+    Point center;
+    center.setx(0);
+    center.sety(0);
+
     Circle c;
-    c.setCenterx(0);
-    c.setCentery(0);
+    c.setCenter(center);
     c.setRadius(1);
 
-    cout << c.checkLocation(0.1, 1) << endl;
+    Point p;
+    p.setx(0.1);
+    p.sety(1);
+    cout << c.checkLocation(p) << endl;
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 

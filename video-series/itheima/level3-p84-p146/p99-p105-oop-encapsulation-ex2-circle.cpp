@@ -2,17 +2,11 @@
 
 #include "p99-p105-oop-encapsulation-ex2-circle.h"
 
-void Circle::setCenterx(double x) {
-    centerx = x;
+void Circle::setCenter(Point p) {
+    center =p;
 }
-double Circle::getCenterx() {
-    return centerx;
-}
-void Circle::setCentery(double y) {
-    centery = y;
-}
-double Circle::getCentery() {
-    return centery;
+Point Circle::getCenter() {
+    return center;
 }
 void Circle::setRadius(double r) {
     radius = r;
@@ -21,9 +15,9 @@ double Circle::getRadius() {
     return radius;
 }
 
-string Circle::checkLocation(double x, double y) {
+string Circle::checkLocation(Point p) {
     double distancep = 0;
-    distancep = pow((centerx - x), 2) + pow((centery - y), 2);
+    distancep = pow((center.getx() - p.getx()), 2) + pow((center.gety() - p.gety()), 2);
         
     if (distancep == pow(radius, 2))
         return "on circle";

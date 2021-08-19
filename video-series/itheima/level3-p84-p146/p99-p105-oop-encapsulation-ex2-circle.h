@@ -8,17 +8,14 @@ using namespace std;
 
 class Circle {
 private:
-    double centerx;
-    double centery;
+    Point center;
     double radius;
 
 public:
-    void setCenterx(double x);
-    double getCenterx();
-    void setCentery(double y);
-    double getCentery();
+    void setCenter(Point c);
+    Point getCenter();
     void setRadius(double r);
     double getRadius();
 
-    string checkLocation(double x, double y);
+    string checkLocation(Point p);
 };
