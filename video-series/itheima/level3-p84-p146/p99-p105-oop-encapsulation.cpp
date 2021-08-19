@@ -67,6 +67,32 @@ struct TempS {
     int number;     // access control is set to public by default
 };
 
+class Human {
+private:
+    string name;
+    int age;
+
+public:
+    void setName(string s) {
+        name = s;
+    }
+
+    string getName() {
+        return name;
+    }
+
+    void setAge(int i) {
+        if (age >= 0 || age <= 100)
+            age = i;
+        else
+            age = 0;
+    }
+
+    int getAge() {
+        return age;
+    }
+};
+
 // p99-p105, object encapsulation
 int main() {
 
