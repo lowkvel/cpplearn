@@ -47,16 +47,19 @@ int main() {
                         has same class_name
                         overloadable
                         automatically called by program once while instantiating a object (when?), no need for manual calling
-                        classfication:  default constructor (without parameter)
-                                        parameterized constructor (with parameter)
-                                        copy constructor (with another same class object as parameter)
-                                            used in     1. copy a object
-                                                        2. pass value (copy) into function as parameter
-                                                        3. return object as value in function
-                        call:           ():      Person p1(...); or Person p1;
-                                        =:       Person p1 = Person(...); Person(...) is a anonymous object
-                                        {}       Person p1 = {...};
-            class_name() {
+                        types:  default constructor (without parameter)
+                                parameterized constructor (with parameter)
+                                copy constructor (with another same class object as parameter)
+                                    used in 1.  copy a object
+                                            2.  pass value (copy) into function as parameter
+                                            3.  return object as value in function
+                        call:   (): Person p1(...); or Person p1;
+                                =:  Person p1 = Person(...); Person(...) is a anonymous object
+                                {}: Person p1 = {...};
+                        rule:   0.  compiler provides default and copy constructor by default
+                                1.  if programmer provides parameterized/copy constructor, 
+                                    then default constructor will not be provided by compiler
+            class_name(...) {
                 ...
             }
         
@@ -64,6 +67,7 @@ int main() {
                         has same class_name but with '~' in front of it
                         non-overloadable because parameters is not allowed
                         automatically called by program once while destructing a object (when?), no need for manual calling
+                        rule:   0.  cpp provides destructor by default
             ~class_name() {
                 ...
             }
