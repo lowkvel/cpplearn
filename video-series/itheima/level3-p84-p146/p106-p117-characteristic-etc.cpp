@@ -87,10 +87,21 @@ public:
 
     // return *this
     // if Person addAge(...) {...} is used here, a copy of the object returned by *this will be created by copy constructor
-    // this we need to return a reference of the object here using Person& addAge(...) {...}
+    // thus we need to return a reference of the object here using Person& addAge(...) {...}
     Person& addAge(Person &p) {
         this->age += p.age;
         return *this;
+    }
+
+    // accessing member function using null pointer
+    void showAge() {
+        // if (this == NULL) {
+        //     return;
+        // }
+        cout << age << endl;
+    }
+    void showClassName() {
+        cout << "Person class" << endl;
     }
 
     int age;
@@ -160,6 +171,13 @@ int main() {
             points to:      the caller object, like p1
             is used when:   distinguish parameter and argument, like this->name = name;
                             return the object itself, like return *this;
+
+        accessing member function using null pointer
+            1.  non-static class variable is not involved, memory allocated for code itself is not associated with object generation
+            2.  non-static class variable is involved, but the object has not instantiated yet (no memory is allocated)
+                the 'this' operator (implicitly added in front of the variable) does not point to any object nor the variable within the object
+
+
     */
 
     // func1
@@ -195,5 +213,11 @@ void func1() {
     // this, chaining
     p2.addAge(p1).addAge(p1).addAge(p1);
     cout << p2.age << " " << *p2.p_height << " " << p2.phone.brand << " " << p2.species << endl;
+
+    // accessing function using null pointer
+    Person *p = NULL;
+    p->showClassName(); // non-static class function, memory allocated for code is not associated with object generation
+    //p->showAge();       // non-static class variable age is involved, but the Person object has not instantiated yet (no memory is allocated)
+                        // the 'this' operator (implicitly added in front of age) does not point to any object nor age within the object
 
 }
