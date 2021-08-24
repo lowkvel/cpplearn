@@ -78,10 +78,25 @@ public:
         cout << "Person destructed" << endl;
     }
 
+    // static member function
+    static string getSex() {
+        //age = 0;                  // static function is not allowed to access non-static variable
+        sex = "what sex?";
+        return sex;
+    }
+
     int age;
-    int *p_height;
+    int *p_height;  // pointer
     Phone phone;
+    
+    static string species;          // public static class member, declared inside of class
+
+private: 
+    static string sex;              // private static class member, declared inside of class
 };
+
+string Person::species = "human";   // public static class member, initialized outside of class
+string Person::sex = "none";        // private static class member, initialized outside of class
 
 void func1();
 
@@ -119,10 +134,18 @@ int main() {
                     thus we can avoid the "no default constructor exists for class "A"" problem
                     https://en.cppreference.com/w/cpp/language/constructor 
 
-
+        static class member (variable & function)
+            static variable:    shared variable by all same-class objects
+                                memory allocated in static pool during compiling phase 
+                                declared inside of class, initialized outside of class
+            static function:    shared function by all same-class objects
+                                have access to static variable only 
+            access methods:     access through specific object, like p1.species; p1.getEtc();
+                                access through class, like Person::species; Person::getEtc();
+            
     */
 
-    // test for shallow and deep copy
+    // func1
     func1();
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
@@ -131,8 +154,26 @@ int main() {
 }
 
 void func1() {
+
+    // p1 instantiation
     Person p1(1, 160, "Apple");
-    cout << p1.age << " " << *p1.p_height << " " << p1.phone.brand << endl;
+    cout << p1.age << " " << *p1.p_height << " " << p1.phone.brand << " " << p1.species << endl;
+
+    // p2 instantiation
     Person p2(p1);
-    cout << p2.age << " " << *p2.p_height << " " << p2.phone.brand << endl;
+    p2.species = "human2.0";   // modify class-level static variable
+    cout << p2.age << " " << *p2.p_height << " " << p2.phone.brand << " " << p2.species << endl;
+
+    // check back to p1 to see the static variable is modified
+    cout << p1.age << " " << *p1.p_height << " " << p1.phone.brand << " " << p1.species << endl;
+
+    // static variable/function access way 1: through object
+    cout << p1.species << " ";
+    cout << p1.getSex() << endl;
+    // static variable/function access way 2: class direct
+    cout << Person::species << " ";
+    cout << Person::getSex() << endl;
+    //cout << Person::sex << endl;      // inaccessible ouside of class because it is private
+
+
 }
