@@ -40,7 +40,7 @@ public:
     //     phone = Phone("");
     //     cout << "default constructor, Person constructed" << endl;
     // }
-    Person(): age(0), p_height(new int(0)), phone("") {
+    Person(): age(0), p_height(new int(0)), phone("etc") {
         cout << "default constructor, Person constructed" << endl;
     }
 
@@ -104,8 +104,17 @@ public:
         cout << "Person class" << endl;
     }
 
-    int age;
-    int *p_height;  // pointer
+    // const function
+    void modifyConst() const {
+        //this->p_height = new int(100);    
+        // not allowed since p_height is not mutable
+        // explaination:    'this' is equivalance to a const pointer (Person * const this), its direction (address) is not modifiable
+        //                  then use second const (const Person * const this) to make the value not modifiable
+        age += 1;   // allowed since it is a mutable variable
+    }
+
+    mutable int age;    // mutable variable, modifiable within const function
+    int *p_height;      // pointer
     Phone phone;
 
     static string species;          // public static class member, declared inside of class
@@ -168,6 +177,7 @@ int main() {
             memory of non-static/static class function and static class variable is not allocated with each object, they are shared among all objects
 
         this
+            nature:         a const pointer (Person * const this), its direction (address) is not modifiable
             points to:      the caller object, like p1
             is used when:   distinguish parameter and argument, like this->name = name;
                             return the object itself, like return *this;
@@ -177,7 +187,16 @@ int main() {
             2.  non-static class variable is involved, but the object has not instantiated yet (no memory is allocated)
                 the 'this' operator (implicitly added in front of the variable) does not point to any object nor the variable within the object
 
-
+        const member function & const object
+            const member function
+                function with const attached
+                cant modify any class member variable within the const function if 'mutable' is not added to the variable
+                    'this' is equivalance to a const pointer (Person * const this), its direction (address) is not modifiable
+                    then use second const (const Person * const this) to make the value not modifiable
+                can modify mutable class member variable
+            const object
+                object with const attached
+                can call const member function only and modify mutbale variable only
     */
 
     // func1
@@ -220,4 +239,10 @@ void func1() {
     //p->showAge();       // non-static class variable age is involved, but the Person object has not instantiated yet (no memory is allocated)
                         // the 'this' operator (implicitly added in front of age) does not point to any object nor age within the object
 
+    // const object
+    const Person p3;
+    cout << p3.age << " " << *p3.p_height << " " << p3.phone.brand << " " << p3.species << endl;
+    p3.age += 1;        // mutable variable is modifiable
+    p3.modifyConst();   // const function is accessible
+    cout << p3.age << " " << *p3.p_height << " " << p3.phone.brand << " " << p3.species << endl;
 }
