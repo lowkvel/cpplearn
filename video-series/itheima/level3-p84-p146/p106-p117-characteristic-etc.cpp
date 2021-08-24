@@ -11,8 +11,8 @@ public:
     // }
 
     // parameterized constructor
-    Phone(string b) {
-        brand = b;
+    Phone(string brand) {
+        this->brand = brand;
         cout << "parameterized constructor, Phone constructed" << endl;
     }
 
@@ -85,10 +85,18 @@ public:
         return sex;
     }
 
+    // return *this
+    // if Person addAge(...) {...} is used here, a copy of the object returned by *this will be created by copy constructor
+    // this we need to return a reference of the object here using Person& addAge(...) {...}
+    Person& addAge(Person &p) {
+        this->age += p.age;
+        return *this;
+    }
+
     int age;
     int *p_height;  // pointer
     Phone phone;
-    
+
     static string species;          // public static class member, declared inside of class
 
 private: 
@@ -143,6 +151,15 @@ int main() {
             access methods:     access through specific object, like p1.species; p1.getEtc();
                                 access through class, like Person::species; Person::getEtc();
             
+        object member memory allocation
+            empty object (class with no variable nor function) takes 1 bytes in order to distinguish it from other empty objects
+            memory of non-static class variable is allocated with each object
+            memory of non-static/static class function and static class variable is not allocated with each object, they are shared among all objects
+
+        this
+            points to:      the caller object, like p1
+            is used when:   distinguish parameter and argument, like this->name = name;
+                            return the object itself, like return *this;
     */
 
     // func1
@@ -175,5 +192,8 @@ void func1() {
     cout << Person::getSex() << endl;
     //cout << Person::sex << endl;      // inaccessible ouside of class because it is private
 
+    // this, chaining
+    p2.addAge(p1).addAge(p1).addAge(p1);
+    cout << p2.age << " " << *p2.p_height << " " << p2.phone.brand << " " << p2.species << endl;
 
 }
