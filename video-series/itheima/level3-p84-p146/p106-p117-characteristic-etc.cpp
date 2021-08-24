@@ -2,26 +2,68 @@
 
 using namespace std;
 
-class Person {
+class Phone {
 public:
     // default constructor
-    Person() {
-        age = 0;
+    // Phone() {
+    //     brand = "";
+    //     cout << "default constructor, Phone constructed" << endl;
+    // }
+
+    // parameterized constructor
+    Phone(string b) {
+        brand = b;
+        cout << "parameterized constructor, Phone constructed" << endl;
+    }
+
+    // destructor
+    ~Phone() {
+        cout << "Phone destructed" << endl;
+    }
+
+    string brand;
+};
+
+class Person {
+public:
+
+    /*   
+        we have to use initializer list to explicitly tell the compiler to use a specific Phone constructor
+        thus we can avoid the "no default constructor exists for class "Phone"" problem
+        https://en.cppreference.com/w/cpp/language/constructor 
+    */
+
+    // default constructor
+    // Person() {
+    //     age = 0;
+    //     p_height = new int(0);
+    //     phone = Phone("");
+    //     cout << "default constructor, Person constructed" << endl;
+    // }
+    Person(): age(0), p_height(new int(0)), phone("") {
         cout << "default constructor, Person constructed" << endl;
     }
 
     // parameterized constructor
-    Person(int a, int height) {
-        age = a;
-        p_height = new int(height);
+    // Person(int a, int height, string phone_name) {
+    //     age = a;
+    //     p_height = new int(height);
+    //     phone = Phone(phone_name);
+    //     cout << "parameterized constructor, Person constructed" << endl;
+    // }
+    Person(int a, int height, string phone_name): age(a), p_height(new int(height)), phone(phone_name) {
         cout << "parameterized constructor, Person constructed" << endl;
     }
 
     // copy constructor, deep copy
-    Person(const Person &p) {
-        age = p.age;
-        //p_height = p.p_height;            // shallow copy
-        p_height = new int(*p.p_height);    // deep copy
+    // Person(const Person &p) {
+    //     age = p.age;
+    //     //p_height = p.p_height;            // shallow copy
+    //     p_height = new int(*p.p_height);    // deep copy
+    //     phone = Phone(p.phone);
+    //     cout << "deep copy constructor, Person constructed" << endl;
+    // }
+    Person(const Person &p): age(p.age), p_height(new int(*p.p_height)), phone(Phone(p.phone)) {
         cout << "deep copy constructor, Person constructed" << endl;
     }
 
@@ -38,6 +80,7 @@ public:
 
     int age;
     int *p_height;
+    Phone phone;
 };
 
 void func1();
@@ -61,11 +104,20 @@ int main() {
                 first destruction p2:   p2: int age=NULL,   int* pheight=NULL,      int 0x0011->NULL
                 second destruction p1:  p1: int age=NULL,   int* pheight=NULL,      int 0x0011->NULL
                                                                                     problem solved using deep copy
-        standard destructor move:
+        
+        standard destructor code:
             if (p_pointer != NULL) {    // standard move here
                 delete p_pointer;       // delete the memory in heap pool
                 p_pointer = NULL;       // re-direct the pointer to NULL
             }
+
+        object member instantiation
+            ex:     class A {};
+                    class B {A a};
+            seq:    object A will be instantiate before B when we instantiate B
+            rule:   we have to use initializer list to explicitly tell the compiler to use a specific A constructor
+                    thus we can avoid the "no default constructor exists for class "A"" problem
+                    https://en.cppreference.com/w/cpp/language/constructor 
 
 
     */
@@ -79,8 +131,8 @@ int main() {
 }
 
 void func1() {
-    Person p1(1, 160);
-    cout << p1.age << " " << *p1.p_height << endl;
+    Person p1(1, 160, "Apple");
+    cout << p1.age << " " << *p1.p_height << " " << p1.phone.brand << endl;
     Person p2(p1);
-    cout << p2.age << " " << *p2.p_height << endl;
+    cout << p2.age << " " << *p2.p_height << " " << p2.phone.brand << endl;
 }

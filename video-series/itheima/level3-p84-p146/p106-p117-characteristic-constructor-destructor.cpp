@@ -16,7 +16,7 @@ public:
         cout << "parameterized constructor, Person constructed" << endl;
     }
 
-    // alterantive form of parameterized constructor, i tend not to use this
+    // parameterized constructor with initializer list
     //Person(int a, string n): age(a), name(n) {}
 
     // copy constructor
