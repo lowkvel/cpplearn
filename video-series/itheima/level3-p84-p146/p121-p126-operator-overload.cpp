@@ -2,11 +2,31 @@
 
 using namespace std;
 
-// used for overloading +, <<
+// used for overloading +, <<, =
 class Person {
 public:
     int a;
     int b;
+    int *age;
+
+    // constructor
+    Person() {              // default
+        // a = b = 0;
+        age = new int(0);
+    }
+    Person(int i) {         // parameterized
+        // a = b = 0;
+        age = new int(i);
+    }
+
+    // destructor
+    ~Person() {
+        if (age != NULL) {
+            delete age;
+            age = NULL;
+        }
+        cout << "Person destructed" << endl;
+    }
 
     // operator+ overload with class member function
     Person operator+(Person &p) {
@@ -20,6 +40,24 @@ public:
     // reason: the desired form cout << p will become p.operator<<(cout) -> p << cout, which is not what we want
     void operator<<(ostream &cout) {
         cout << this->a << " " << this->b << endl;
+    }
+
+    // operator= overload with class member function, turn shallow copy into deep copy
+    Person& operator=(Person &p) {
+        // delete the memory if already allocated
+        if (age != NULL) {
+            delete age;
+            age = NULL;
+        }
+        
+        // deep copy for heap storage
+        age = new int(*p.age);
+
+        // shallow copy for the rest
+        a = p.a;
+        b = p.b;
+
+        return *this;
     }
 };
 
@@ -108,7 +146,19 @@ int main() {
                         return temp;            // local variable
                     }
 
-        
+        operator= overload
+            1.  operator= overload with class member function               p1.operator=(p2)    ->  p1 = p2
+                    Person& operator=(Person &p) {
+                        // delete the memory if already allocated
+                        if (age != NULL) {
+                            delete age;
+                            age = NULL;
+                        }
+                        age = new int(*p.age);  // deep copy for heap pool
+                        ...                     // shallow copy for others
+                        return *this;
+                    }
+
     */
 
     func1();
@@ -145,6 +195,14 @@ void func1() {
     cout << ++(++i) << " ";     cout << i << endl;      // pre-increment
     cout << i++ << " ";         cout << i << endl;      // post-increment, cant do chaining operation here
 
+    // operator= overload with class member function, turn default shallow copy into deep copy
+    Person p5 = Person(5);   
+    Person p6 = Person(6);
+    Person p7 = Person(7);
+    cout << *p5.age << " " << *p6.age << " " << *p7.age << endl;
+    p5.operator=(p6.operator=(p7));
+    //p5 = p6 = p7;   // chain
+    cout << *p5.age << " " << *p6.age << " " << *p7.age << endl;  
     
 }
 
@@ -173,3 +231,10 @@ ostream& operator<<(ostream &cout, Myint i) {
     cout << i.num;  // friend is declared within Myint here
     return cout;
 }
+
+// todo
+// Person& operator=(Person &p) {
+//     this->a = p.a;
+//     this->b = p.b;
+//     this->age = new int(p.age);
+// }
