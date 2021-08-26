@@ -8,15 +8,20 @@ public:
     int a;
     int b;
     int *age;
+    string name;
 
     // constructor
     Person() {              // default
         // a = b = 0;
         age = new int(0);
     }
-    Person(int i) {         // parameterized
+    Person(int iage) {      // parameterized
         // a = b = 0;
-        age = new int(i);
+        age = new int(iage);
+    }
+    Person(string s) {      // parameterized
+        name = s;
+        age = new int(0);
     }
 
     // destructor
@@ -58,6 +63,17 @@ public:
         b = p.b;
 
         return *this;
+    }
+
+    // operator_logical overload with class member function
+    bool operator<(Person &p) {
+        return this->name < p.name ? true: false;
+    }
+    bool operator==(Person &p) {
+        return this->name == p.name ? true: false;
+    }
+    bool operator>(Person &p) {
+        return this->name > p.name ? true: false;
     }
 };
 
@@ -159,6 +175,12 @@ int main() {
                         return *this;
                     }
 
+        operator_logical overload
+            1.  operator== overload with class member function              p1.operator==(p2)   ->  p1 == p2
+                    bool operator==(Person &p) {
+                        return this->name == p.name ? true: false;
+                    }
+
     */
 
     func1();
@@ -203,6 +225,24 @@ void func1() {
     p5.operator=(p6.operator=(p7));
     //p5 = p6 = p7;   // chain
     cout << *p5.age << " " << *p6.age << " " << *p7.age << endl;  
+
+    // operator_logical overload
+    Person p8 = Person("Alice");
+    Person p9 = Person("Bob");
+    if (p8.operator<(p9)) {
+        cout << "<" << endl;
+    } else if (p8.operator>(p9)) {
+        cout << ">" << endl;
+    } else {
+        cout << "==" << endl;
+    }
+    if (p8 < p9) {
+        cout << "<" << endl;
+    } else if (p8 > p9) {
+        cout << ">" << endl;
+    } else {
+        cout << "==" << endl;
+    }
     
 }
 
