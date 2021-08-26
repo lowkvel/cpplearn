@@ -15,10 +15,18 @@ public:
         temp.b = this->b + p.b;
         return temp;
     }
+
+    // operator<< overload with class member function, we tend not to use it, 
+    // reason: the desired form cout << p will become p.operator<<(cout) -> p << cout, which is not what we want
+    void operator<<(ostream &cout) {
+        cout << this->a << " " << this->b << endl;
+    }
 };
 
 void func1();
 Person operator+(Person &p1, Person &p2);
+//void operator<<(ostream &cout, Person &p);    // no chaining capabilities
+ostream& operator<<(ostream &cout, Person &p);  // with channing capabilities
 
 // p120-p126, operator overload
 int main() {
@@ -30,18 +38,29 @@ int main() {
             1.  operator overload is allowed to have function overload at the same time based on differenct set of parameters
 
         operator+ overload
-            1.  class member function operator overload
-                return_type operator+(...) {
-                    return_type temp;
-                    ...
-                    return temp;
-                }
-            2.  global function operator overload
-                return_type operator+(..., ...) {
-                    return_type temp;
-                    ...
-                    return temp;
-                }
+            1.  operator+ overload with class member function               p1.operator+(p2)    ->  p1 + p2
+                    return_type operator+(...) {
+                        return_type temp;
+                        ...
+                        return temp;
+                    }
+            2.  operator+ overload with global function                     operator+(p1, p2)   ->  p1 + p2
+                    return_type operator+(..., ...) {
+                        return_type temp;
+                        ...
+                        return temp;
+                    }
+
+        operator<< overload
+            1.  operator<< overload with class member function              p.operator<<(cout)  ->  p << cout
+                    dont use this one 
+                    because the desired form         -> cout << p 
+                    will become p.operator<<(cout)   -> p << cout
+            2.  operator<< overload with global function
+                    ostream& operator<<(ostream &cout, return_type &p) {    operator<<(cout, p) ->  cout << p << ...
+                        cout << ...;
+                        return cout;
+                    }
 
         
     */
@@ -65,6 +84,16 @@ void func1() {
     // simplified version for p3 & p4
     //Person p5 = p1 + p2;            cout << p3.a << " " << p3.b << endl;
 
+    // operator<< overload with class member function, we tend not to use it, 
+    // reason: the desired form cout << p will become p.operator<<(cout) -> p << cout, which is not what we want
+    p1.operator<<(cout);            // dont use this one
+    // simplified version for p1
+    p1 << cout;                     // dont use this one
+    // operator<< overload with global function
+    operator<<(cout, p2) << endl;
+    // simplified version for p2
+    cout << p2 << endl;
+
 }
 
 Person operator+(Person &p1, Person &p2) {
@@ -72,4 +101,15 @@ Person operator+(Person &p1, Person &p2) {
     temp.a = p1.a + p2.a;
     temp.b = p1.b + p2.b;
     return temp;
+}
+
+// normally this will do, but we need to use the following one because of chaining capabiliteis
+// void operator<<(ostream &cout, Person &p) {
+//     cout << p.a << " " << p.b << endl;
+// }
+
+// this one gives the capabiliteis to output more things (like endl) after the Person object
+ostream& operator<<(ostream &cout, Person &p) {
+    cout << p.a << " " << p.b;
+    return cout;
 }
