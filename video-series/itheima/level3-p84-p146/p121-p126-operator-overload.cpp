@@ -2,6 +2,14 @@
 
 using namespace std;
 
+class Printer {
+public:
+    // operator() overload, function call overload with class member function, used as functor
+    void operator()(string s) {
+        cout << s << endl;
+    }
+};
+
 // used for overloading +, <<, =
 class Person {
 public:
@@ -121,7 +129,8 @@ int main() {
     cout << "operator overload" << endl;
 
     /*
-        operator overload
+        operator overload: 
+            https://en.cppreference.com/w/cpp/language/operators 
             1.  operator overload is allowed to have function overload at the same time based on differenct set of parameters
 
         operator+ overload
@@ -181,6 +190,14 @@ int main() {
                         return this->name == p.name ? true: false;
                     }
 
+        operator() overload, function call overload, used with functor
+            class Printer {
+            public:
+                // operator() overload with class member function, used as functor
+                void operator()(string s) {
+                    cout << s << endl;
+                }
+            };
     */
 
     func1();
@@ -243,7 +260,11 @@ void func1() {
     } else {
         cout << "==" << endl;
     }
-    
+
+    // operator() overload, function call overload, used with functor
+    Printer pri;
+    pri("hey, this is a Printer functor");
+    Printer()("hey, this is a Printer functor with anonymous Printer object: Printer()");
 }
 
 Person operator+(Person &p1, Person &p2) {
