@@ -2,8 +2,8 @@
 
 using namespace std;
 
+// used for overloading +, <<
 class Person {
-
 public:
     int a;
     int b;
@@ -23,10 +23,43 @@ public:
     }
 };
 
+// used for overloading ++
+class Myint {
+private:
+    int num;
+
+friend ostream& operator<<(ostream& cout, Myint i);
+
+public:
+    Myint() {
+        num = 0;
+    }
+
+    // operator++ overload with class member function, pre-increment
+    // return reference of Myint here is because 
+    // we want to increment the value of the same Myint object, like: ++(++(++i))
+    // instead of incrementing the copied value everytime
+    Myint& operator++() {
+        num++;                  // increment the value
+        return *this;           // return a reference for chaining capability
+    }
+
+    // operator++ overload with class member function, post-increment
+    // int here is used as placeholder parameter, can be used to distinguish pre- and post- increment
+    // pay attention to the copied value returned here compared to above pre-increment implementation
+    Myint operator++(int) {
+        Myint temp = *this;     // record current value, copy constructor involved here
+        num++;                  // increment the value
+        return temp;            // return a copy of recorded value instead of reference 
+                                // because it is a local variable which will be deleted when this function ends
+    }
+};
+
 void func1();
 Person operator+(Person &p1, Person &p2);
 //void operator<<(ostream &cout, Person &p);    // no chaining capabilities
 ostream& operator<<(ostream &cout, Person &p);  // with channing capabilities
+ostream& operator<<(ostream &cout, Myint i);    // pay attention to the value instead of reference here
 
 // p120-p126, operator overload
 int main() {
@@ -62,6 +95,19 @@ int main() {
                         return cout;
                     }
 
+        operator++ overload
+            1.  pre-increment
+                    Myint& operator++() {       // reference returned
+                        num++; 
+                        return *this;           // chaining capability
+                    }
+            2.  post-increment
+                    Myint operator++(int) {     // copied value returned
+                        Myint temp = *this;
+                        num++;
+                        return temp;            // local variable
+                    }
+
         
     */
 
@@ -94,6 +140,12 @@ void func1() {
     // simplified version for p2
     cout << p2 << endl;
 
+    // operator++ overload with class member function, including pre-increment and post-increment
+    Myint i;                    cout << i << endl;      // instantiate i
+    cout << ++(++i) << " ";     cout << i << endl;      // pre-increment
+    cout << i++ << " ";         cout << i << endl;      // post-increment, cant do chaining operation here
+
+    
 }
 
 Person operator+(Person &p1, Person &p2) {
@@ -111,5 +163,13 @@ Person operator+(Person &p1, Person &p2) {
 // this one gives the capabiliteis to output more things (like endl) after the Person object
 ostream& operator<<(ostream &cout, Person &p) {
     cout << p.a << " " << p.b;
+    return cout;
+}
+// we use 'Myint i' here instead of 'Myint &i' like above
+// because the pre-increment requires chaining capabilities which means we have to use reference
+// but the post-increment requires the local variable to be returned which means we have to return a copied value of Myint
+// so we combine two requirements into one since a referenced value is also a value
+ostream& operator<<(ostream &cout, Myint i) {
+    cout << i.num;  // friend is declared within Myint here
     return cout;
 }
