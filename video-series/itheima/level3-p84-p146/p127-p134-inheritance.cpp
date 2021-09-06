@@ -106,10 +106,10 @@ int main() {
         inheritance
 
         1.  grammar
-            class parent_class {
+            class parent_class_name {
                 ...
             };
-            class child_class: inheritance_type parent_class {
+            class child_class_name: inheritance_type parent_class_name {
                 ...
             };
 
@@ -125,6 +125,9 @@ int main() {
                 private inheritance:    child class member will have all inheritable (public/protected/private(hidden)) parent class member changed to private
                                         explain:    private inheritance type overrides the public/protected parent class member access right
 
+        3.  constructor & destructor
+            construction sequence:  parent constructed before child
+            destruction sequence:   child destructed before parent
         
 
 
