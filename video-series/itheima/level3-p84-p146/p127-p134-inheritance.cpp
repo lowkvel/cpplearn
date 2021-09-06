@@ -63,9 +63,9 @@ public:
     }
 
     void inheritance_type_tester() {
-        header();       // public header() with public inheritance,         public, accessible
+        header();       // public header() with public inheritance,         public (child & inside), accessible
         footer();       // protected footer() with public inheritance,      protected (child & inside), accessible
-        //sidebar();    // private sidebar() with public inheritance,       private (parent), inaccessible
+        //sidebar();    // private sidebar() with public inheritance,       private (child & hidden), inaccessible
     }
 };
 
@@ -79,7 +79,7 @@ public:
     void inheritance_type_tester() {
         header();       // public header() with protected inheritance,      protected (child & inside), accessible
         footer();       // protected footer() with protected inheritance,   protected (child & inside), accessible
-        //sidebar();    // private sidebar() with protected inheritance,    private (parent), inaccessible
+        //sidebar();    // private sidebar() with protected inheritance,    private (child & hidden), inaccessible
     }
 };
 
@@ -93,7 +93,7 @@ public:
     void inheritance_type_tester() {
         header();       // public header() with private inheritance,        private (child & inside), accessible
         footer();       // protected footer() with private inheritance,     private (child & inside), accessible
-        //sidebar();    // private sidebar() with private inheritance,      private (parent), inaccessible
+        //sidebar();    // private sidebar() with private inheritance,      private (child & hidden), inaccessible
     }
 };
 
@@ -115,14 +115,14 @@ int main() {
 
         2.  inheritance type
             0.  3 types: public, protected and private
-            1.  public/protected member of parent class can be inherited from parent class to child class
-                -> but private member of parent class is inaccessible for child class, no matter which inheritance type is used
+            1.  all public/protected/private non-static member of parent class can be inherited from parent class to child class
+                -> but private member of parent class is hidden by compiler (so inaccessible) for child class, no matter which inheritance type is used
             2.  the inheritance type follows minimum access right rule, which means:
-                public inheritance:     child class member has the same access right as parent class (public/protected)
+                public inheritance:     child class member has the same access right as parent class (public/protected/private(hidden))
                                         explain:    protected parent class member access right overrides the public inheritance type
-                protected inheritance:  child class member will have all inheritable (public/protected) parent class member changed to protected
+                protected inheritance:  child class member will have all inheritable (public/protected/private(hidden)) parent class member changed to protected
                                         explain:    protected inheritance type overrides the public parent class member access right
-                private inheritance:    child class member will have all inheritable (public/protected) parent class member changed to private
+                private inheritance:    child class member will have all inheritable (public/protected/private(hidden)) parent class member changed to private
                                         explain:    private inheritance type overrides the public/protected parent class member access right
 
         
@@ -163,9 +163,9 @@ void implementation_with_inheritance() {
 
     cout << "\nCpp Page" << endl;
     Cppi c;
-    c.header();         // public header() with public inheritance,         public, accessible
+    c.header();         // public header() with public inheritance,         public (child & outside), accessible
     //c.footer();       // protected footer() with public inheritance,      protected (child & outside), inaccessible
-    //c.sidebar();      // private sidebar() with public inheritance,       private (parent & outside), inaccessible
+    //c.sidebar();      // private sidebar() with public inheritance,       private (child & hidden & outside), inaccessible
     c.content();        // class specific member
     c.inheritance_type_tester();
 
@@ -173,7 +173,7 @@ void implementation_with_inheritance() {
     Pythoni p;
     //p.header();       // public header() with protected inheritance,      protected (child & outside), inaccessible
     //p.footer();       // protected footer() with protected inheritance,   protected (child & outside), inaccessible
-    //p.sidebar();      // private sidebar() with protected inheritance,    private (parent & outside), inaccessible
+    //p.sidebar();      // private sidebar() with protected inheritance,    private (child & hidden & outside), inaccessible
     p.content();        // class specific member
     p.inheritance_type_tester();
 
@@ -181,7 +181,7 @@ void implementation_with_inheritance() {
     Jsi j;
     //j.header();       // public header() with private inheritance,        private (child & outside), inaccessible
     //j.footer();       // protected footer() with private inheritance,     private (child & outside), inaccessible
-    //j.sidebar();      // private sidebar() with private inheritance,      private (parent & outside), inaccessible
+    //j.sidebar();      // private sidebar() with private inheritance,      private (child & hidden & outside), inaccessible
     j.content();        // class specific member
     j.inheritance_type_tester();
 }
