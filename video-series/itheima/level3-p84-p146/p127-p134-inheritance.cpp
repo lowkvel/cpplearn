@@ -53,6 +53,10 @@ private:
     void sidebar() {                    // inheritable code with private access right
         cout << "sidebar" << endl;
     }
+public:
+    void content() {
+        cout << "base content" << endl; // inheritable code with public access right, test for same name member in child classes
+    }
 };
 
 // implementation with inheritance: cpp
@@ -129,12 +133,16 @@ int main() {
             construction sequence:  parent constructed before child
             destruction sequence:   child destructed before parent
         
-
+        4.  access same-name-member (just need the name to be the same (including override)) in both parent & child class
+                for child member:   access directly                -> child_object_name.child_class_member_name
+                for parent member:  access with scope (parent)     -> child_object_name.parent_class_name::parent_class_member_name
+                child same-name-member will hide all same-name-member in parent class, including overrode functions in parent class
+            
 
     */
 
     // implementation without/with inheritance
-    implementation_without_inheritance();
+    //implementation_without_inheritance();
     implementation_with_inheritance();
 
 
@@ -166,25 +174,28 @@ void implementation_with_inheritance() {
 
     cout << "\nCpp Page" << endl;
     Cppi c;
-    c.header();         // public header() with public inheritance,         public (child & outside), accessible
-    //c.footer();       // protected footer() with public inheritance,      protected (child & outside), inaccessible
-    //c.sidebar();      // private sidebar() with public inheritance,       private (child & hidden & outside), inaccessible
-    c.content();        // class specific member
+    c.header();                 // public header() with public inheritance,                 public (child & outside), accessible
+    //c.footer();               // protected footer() with public inheritance,              protected (child & outside), inaccessible
+    //c.sidebar();              // private sidebar() with public inheritance,               private (child & hidden & outside), inaccessible
+    c.BasePage::content();      // public BasePage::content() with public inheritance,      public (parent & outside), accessible
+    c.content();                // class specific member
     c.inheritance_type_tester();
 
     cout << "\nPython Page" << endl;
     Pythoni p;
-    //p.header();       // public header() with protected inheritance,      protected (child & outside), inaccessible
-    //p.footer();       // protected footer() with protected inheritance,   protected (child & outside), inaccessible
-    //p.sidebar();      // private sidebar() with protected inheritance,    private (child & hidden & outside), inaccessible
-    p.content();        // class specific member
+    //p.header();               // public header() with protected inheritance,              protected (child & outside), inaccessible
+    //p.footer();               // protected footer() with protected inheritance,           protected (child & outside), inaccessible
+    //p.sidebar();              // private sidebar() with protected inheritance,            private (child & hidden & outside), inaccessible
+    //p.BasePage::content();    // public BasePage::content() with protected inheritance,   protected (parent & outside), inaccessible
+    p.content();                // class specific member
     p.inheritance_type_tester();
 
     cout << "\nJs Page" << endl;
     Jsi j;
-    //j.header();       // public header() with private inheritance,        private (child & outside), inaccessible
-    //j.footer();       // protected footer() with private inheritance,     private (child & outside), inaccessible
-    //j.sidebar();      // private sidebar() with private inheritance,      private (child & hidden & outside), inaccessible
-    j.content();        // class specific member
+    //j.header();               // public header() with private inheritance,                private (child & outside), inaccessible
+    //j.footer();               // protected footer() with private inheritance,             private (child & outside), inaccessible
+    //j.sidebar();              // private sidebar() with private inheritance,              private (child & hidden & outside), inaccessible
+    //j.BasePage::content();    // public BasePage::content() with private inheritance,     private (parent & outside), inaccessible
+    j.content();                // class specific member
     j.inheritance_type_tester();
 }
