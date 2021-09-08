@@ -63,10 +63,14 @@ public:
 };
 int BasePage::num = 0;
 
-class BasePage2 {
-public:
-    string s;
-};
+// virtual inheritance
+class BasePage1 {public: int num1;};
+class BasePage21: public BasePage1 {};
+class BasePage22: public BasePage1 {};
+class BasePage31: public BasePage21, public BasePage22 {};
+class BasePage23: virtual public BasePage1 {};
+class BasePage24: virtual public BasePage1 {};
+class BasePage32: public BasePage23, public BasePage24 {};
 
 // implementation with inheritance: cpp
 class Cppi: public BasePage {
@@ -123,7 +127,7 @@ public:
 };
 int Jsi::num = 13;
 
-class Javai: public BasePage, public BasePage2 {
+class Javai: public BasePage, public BasePage1 {
 public:
     int n;
 };
@@ -178,6 +182,24 @@ int main() {
             class child_class_name: inheritance_type parent_class_name1, inheritance_type parent_class_name2, ... {
                 ...
             };
+            problem:    ambiguity, can be solved using scope, such as: obj.Base1::member1, obj.Base1::member1
+
+        6.  diamond inheritance
+              p1
+             /  \
+            c1  c2
+             \  /
+              g1
+            child 1 & 2 is inherited from parent 1
+            grandchild 1 is inherited from child 1 & 2
+            problem:    ambiguity,      such as: g1.c1::member1, g1.c2::member1, 
+                                        can be solved by using scope
+                                            c1::member1 and c2::member1 exist in their class c1 and c2 as two different members
+                        duplication,    such as: g1.c1::member1 and g1.c2::member1 is inherited from the same p1::member1
+                                        can be solved by using virtual inheritance
+                                            c1::member1 and c2::member1 exist in their parent class g1, 
+                                            while two virtual base pointers is stored in c1 and c2 to point to a virtual base table,
+                                            which is used to store the offset towards the location of p1::member1
     */
 
     // implementation without/with inheritance
@@ -244,8 +266,19 @@ void implementation_with_inheritance() {
     cout << Cppi::num << endl;              // child class direct access
     cout << Cppi::BasePage::num << endl;    // child class & parent scope direct access
 
-    // multiple inheritance
+    // multiple inheritance, ambiguity
     Javai ja;
     ja.content();
     cout << ja.num << " " << ja.n << endl;
+    cout << ja.BasePage::num << " " << ja.n << endl;
+
+    // diamond inheritance, ambiguity & duplication
+    BasePage31 bp31;
+    bp31.BasePage21::num1 = 21;     // ambiguity, solved by using scope
+    bp31.BasePage22::num1 = 22;     // ambiguity, solved by using scope
+    cout << bp31.BasePage21::num1 << " " << bp31.BasePage22::num1 << endl;
+    BasePage32 bp32;
+    bp32.BasePage23::num1 = 23;     // duplication, solved by using virtual inheritance
+    bp32.BasePage24::num1 = 24;     // duplication, solved by using virtual inheritance
+    cout << bp32.BasePage23::num1 << " " << bp32.BasePage24::num1 << endl;
 }
