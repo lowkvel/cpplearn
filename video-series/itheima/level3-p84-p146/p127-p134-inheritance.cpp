@@ -57,7 +57,11 @@ public:
     void content() {
         cout << "base content" << endl; // inheritable code with public access right, test for same name member in child classes
     }
+
+public:
+    static int num;
 };
+int BasePage::num = 0;
 
 // implementation with inheritance: cpp
 class Cppi: public BasePage {
@@ -71,7 +75,11 @@ public:
         footer();       // protected footer() with public inheritance,      protected (child & inside), accessible
         //sidebar();    // private sidebar() with public inheritance,       private (child & hidden), inaccessible
     }
+
+public:
+    static int num;
 };
+int Cppi::num = 11;
 
 // implementation with inheritance: python
 class Pythoni: protected BasePage {
@@ -85,7 +93,12 @@ public:
         footer();       // protected footer() with protected inheritance,   protected (child & inside), accessible
         //sidebar();    // private sidebar() with protected inheritance,    private (child & hidden), inaccessible
     }
+
+public:
+    static int num;
 };
+int Pythoni::num = 12;
+
 
 // implementation with inheritance: js
 class Jsi: private BasePage {
@@ -99,7 +112,11 @@ public:
         footer();       // protected footer() with private inheritance,     private (child & inside), accessible
         //sidebar();    // private sidebar() with private inheritance,      private (child & hidden), inaccessible
     }
+
+public:
+    static int num;
 };
+int Jsi::num = 13;
 
 // p127-p134, inheritance
 int main() {
@@ -137,8 +154,8 @@ int main() {
                 for child member:   access directly                -> child_object_name.child_class_member_name
                 for parent member:  access with scope (parent)     -> child_object_name.parent_class_name::parent_class_member_name
                 child same-name-member will hide all same-name-member in parent class, including overrode functions in parent class
-            
-
+            access same-name-static-member
+                same as above
     */
 
     // implementation without/with inheritance
@@ -198,4 +215,10 @@ void implementation_with_inheritance() {
     //j.BasePage::content();    // public BasePage::content() with private inheritance,     private (parent & outside), inaccessible
     j.content();                // class specific member
     j.inheritance_type_tester();
+
+    // static member access
+    cout << c.num << endl;                  // child object access 
+    cout << c.BasePage::num << endl;        // child object & parent scope access
+    cout << Cppi::num << endl;              // child class direct access
+    cout << Cppi::BasePage::num << endl;    // child class & parent scope direct access
 }
