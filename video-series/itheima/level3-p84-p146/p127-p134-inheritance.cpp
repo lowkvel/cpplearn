@@ -63,6 +63,11 @@ public:
 };
 int BasePage::num = 0;
 
+class BasePage2 {
+public:
+    string s;
+};
+
 // implementation with inheritance: cpp
 class Cppi: public BasePage {
 public:
@@ -118,6 +123,11 @@ public:
 };
 int Jsi::num = 13;
 
+class Javai: public BasePage, public BasePage2 {
+public:
+    int n;
+};
+
 // p127-p134, inheritance
 int main() {
 
@@ -156,6 +166,18 @@ int main() {
                 child same-name-member will hide all same-name-member in parent class, including overrode functions in parent class
             access same-name-static-member
                 same as above
+
+        5.  multiple inheritance
+            class parent_class_name1 {
+                ...
+            };
+            class parent_class_name2 {
+                ...
+            };
+            ...
+            class child_class_name: inheritance_type parent_class_name1, inheritance_type parent_class_name2, ... {
+                ...
+            };
     */
 
     // implementation without/with inheritance
@@ -221,4 +243,9 @@ void implementation_with_inheritance() {
     cout << c.BasePage::num << endl;        // child object & parent scope access
     cout << Cppi::num << endl;              // child class direct access
     cout << Cppi::BasePage::num << endl;    // child class & parent scope direct access
+
+    // multiple inheritance
+    Javai ja;
+    ja.content();
+    cout << ja.num << " " << ja.n << endl;
 }
