@@ -10,19 +10,24 @@ public:
 
     // dynamic polymorphism, virtual function
     // the address of function speak() is determined in running phase
+    // the virtual means that a vfptr (virtual function (table) pointer) is stored here, similar to vbptr
+    // and vfptr points to a vftable (virtual function table), which stores the address: &Animal::speak()
     virtual void speak() { cout << "animal speak" << endl; }
 };
 
 class Cat: public Animal {
 public:
-    void speak() {
+    // if the child Cat overrode the parent Animal's virtual function speak(), like below
+    // the vfptr inherited (a copied one) from parent Animal will points to a new vftable
+    // but the address stored inside of that vftable is overrode with &Cat::speak() instead of the original &Animal::speak()
+    virtual void speak() {              // the "virtual" keyword can be omitted here
         cout << "cat speak" << endl;
     }
 };
 
 class Dog: public Animal {
 public:
-    void speak() {
+    void speak() {                      // the "virtual" keyword is omitted here
         cout << "dog speak" << endl;
     }
 };
@@ -39,11 +44,11 @@ int main() {
         polymorphism
 
         1.  static polymorphism:    function address determined in compiling phase
-            including:      function overload & operator overload
+                including:          function overload & operator overload
             
         2.  dynamic polymorphism:   function address deretmined in running phase
-            including:      derived class (child class) and virtual inheritance class
-            requirement:    derived class needs to override parent virtual same-return_type/name/para_list function
+                including:          derived class (child class) with virtual function override and virtual inheritance class
+                requirement:        derived class needs to override parent virtual same-return_type/name/para_list function
 
     */
 
@@ -60,7 +65,7 @@ void func1() {
     // we want the cat/dog to speak, but we will get animal speaking if speak() in Animal is not virtual
     // because the address of function speak() in Animal is determined in compiling phase if it is not virtual, this is static polymorphism
     // after we change function speak() in Animal to virtual, cat/dog will get their speak()
-    Animal a;   doSpeak(a);     // 
+    Animal a;   doSpeak(a);     // original
     Cat c;      doSpeak(c);     // dynamic polymophism
     Dog d;      doSpeak(d);     // dynamic polymophism
 
