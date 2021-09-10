@@ -16,22 +16,68 @@ public:
 
     // dynamic polymorphism, pure virtual function -> abstract class Animal
     virtual void speak() = 0;
+
+    // constructor
+    Animal() { cout << "animal constructed" << endl; }
+
+    // destructor, virtual
+    virtual ~Animal() { cout << "animal destructed" << endl; }
+    // destructor, pure virtual, specific implememtation is mandatory
+    //virtual ~Animal() = 0;
 };
+
+// pure virtual destructor needs a implementation
+//Animal::~Animal() { cout << "animal destructed" << endl; }
 
 class Cat: public Animal {
 public:
+    string *name;
+
+    // constructor, override
+    Cat(string name) { 
+        this->name = new string(name);
+        cout << *this->name << " cat constructed" << endl; 
+    }
+
+    // destructor, override
+    ~Cat() {
+        if (name != NULL) {
+            cout << *name << " cat destructed" << endl;
+            delete name;
+            name = NULL;
+        }
+    }
+
     // if the child Cat overrode the parent Animal's virtual function speak(), like below
     // the vfptr inherited (a copied one) from parent Animal will points to a new vftable
     // but the address stored inside of that vftable is overrode with &Cat::speak() instead of the original &Animal::speak()
     virtual void speak() {              // the "virtual" keyword can be omitted here
-        cout << "cat speak" << endl;
+        cout << *name << " cat speak" << endl;
     }
 };
 
 class Dog: public Animal {
 public:
+    string *name;
+
+    // constructor, override
+    Dog(string name) { 
+        this->name = new string(name);
+        cout << *this->name << " dog constructed" << endl; 
+    }
+
+    // destructor, override
+    ~Dog() {
+        if (name != NULL) {
+            cout << *name << " dog destructed" << endl;
+            delete name;
+            name = NULL;
+        }
+    }   
+
+    // dynamic polymorphism
     void speak() {                      // the "virtual" keyword is omitted here
-        cout << "dog speak" << endl;
+        cout << *name << " dog speak" << endl;
     }
 };
 
@@ -58,10 +104,15 @@ int main() {
 
         4.  pure virtual function
                 grammar:            virtual return_type function_name(parameter_list) = 0;
-
                 if a class has pure virtual function, it is also called abstract class, which cannot be instantiated
                 if a class inherited from a abstract class and wants to get instantiated
                 it needs to override all pure virtual functions from the parent to become a concrete class, otherwise it remains abstract
+
+        5.  virtual destructor
+            1.  normal virtual destructor
+                implememted in child class
+            2.  pure virtual destructor
+                pure virtual destructor must be implememted, otherwise the compiler wont find the implememted destructor for parent class 
     */
 
     // func1()
@@ -77,11 +128,31 @@ void func1() {
     // because the address of function speak() in Animal is determined in compiling phase if it is not virtual, this is static polymorphism
     // after we change function speak() in Animal to virtual, cat/dog will get their speak()
     //Animal a;   doSpeak(a);     // original, it is a abstract class now, cannot be instantiated
-    Cat c;      doSpeak(c);     // dynamic polymophism
-    Dog d;      doSpeak(d);     // dynamic polymophism
+    Cat c = Cat("slim");    // dynamic polymophism
+    doSpeak(c);
+    //delete &c; 
+    // You must not delete an object that was not allocated with new. 
+    // If the object was allocated on the stack pool, your compiler has already generated a call to its destructor at the end of its scope. 
+    // This means you will call the destructor twice, with potentially very bad effects.
+    // https://stackoverflow.com/questions/4355468/is-it-possible-to-delete-a-non-new-object 
 
-    Animal *cp = new Cat;   cp->speak();
-    Animal *dp = new Dog;   dp->speak();
+    Dog d = Dog("blue");    // dynamic polymophism    
+    doSpeak(d);
+    //delete &d; 
+    // You must not delete an object that was not allocated with new. 
+    // If the object was allocated on the stack pool, your compiler has already generated a call to its destructor at the end of its scope. 
+    // This means you will call the destructor twice, with potentially very bad effects.  
+    // https://stackoverflow.com/questions/4355468/is-it-possible-to-delete-a-non-new-object 
+
+    Animal *cp = new Cat("fat");   
+    cp->speak();    
+    delete cp; 
+    cp = NULL;
+
+    Animal *dp = new Dog("cool");   
+    dp->speak();
+    delete dp; 
+    dp = NULL;
 }
 
 // accepts a reference of a object from parent class Animal
