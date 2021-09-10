@@ -52,7 +52,7 @@ int main() {
 
     // default argument of parameter
     //func1(10);          // ?
-    func1(10, 20, 30);  // default argument overrode
+    func1(10, 20, 30);  // default argument overload
     func4(10, 20, 30);
 
     // placeholder parameter

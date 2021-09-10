@@ -164,10 +164,10 @@ int main() {
             construction sequence:  parent constructed before child
             destruction sequence:   child destructed before parent
         
-        4.  access same-name-member (just need the name to be the same (including override)) in both parent & child class
+        4.  access same-name-member (just need the name to be the same (including overload)) in both parent & child class
                 for child member:   access directly                -> child_object_name.child_class_member_name
                 for parent member:  access with scope (parent)     -> child_object_name.parent_class_name::parent_class_member_name
-                child same-name-member will hide all same-name-member in parent class, including overrode functions in parent class
+                child same-name-member will hide all same-name-member in parent class, including overloaded functions in parent class
             access same-name-static-member
                 same as above
 
