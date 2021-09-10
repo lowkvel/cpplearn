@@ -12,7 +12,10 @@ public:
     // the address of function speak() is determined in running phase
     // the virtual means that a vfptr (virtual function (table) pointer) is stored here, similar to vbptr
     // and vfptr points to a vftable (virtual function table), which stores the address: &Animal::speak()
-    virtual void speak() { cout << "animal speak" << endl; }
+    //virtual void speak() { cout << "animal speak" << endl; }
+
+    // dynamic polymorphism, pure virtual function -> abstract class Animal
+    virtual void speak() = 0;
 };
 
 class Cat: public Animal {
@@ -50,6 +53,15 @@ int main() {
                 including:          derived class (child class) with virtual function override and virtual inheritance class
                 requirement:        derived class needs to override parent virtual same-return_type/name/para_list function
 
+        3.  virtual function
+                grammar:            virtual return_type function_name(parameter_list) {...}
+
+        4.  pure virtual function
+                grammar:            virtual return_type function_name(parameter_list) = 0;
+
+                if a class has pure virtual function, it is also called abstract class, which cannot be instantiated
+                if a class inherited from a abstract class and wants to get instantiated
+                it needs to override all pure virtual functions from the parent to become a concrete class, otherwise it remains abstract
     */
 
     // func1()
@@ -61,16 +73,16 @@ int main() {
 }
 
 void func1() {
-
     // we want the cat/dog to speak, but we will get animal speaking if speak() in Animal is not virtual
     // because the address of function speak() in Animal is determined in compiling phase if it is not virtual, this is static polymorphism
     // after we change function speak() in Animal to virtual, cat/dog will get their speak()
-    Animal a;   doSpeak(a);     // original
+    //Animal a;   doSpeak(a);     // original, it is a abstract class now, cannot be instantiated
     Cat c;      doSpeak(c);     // dynamic polymophism
     Dog d;      doSpeak(d);     // dynamic polymophism
 
+    Animal *cp = new Cat;   cp->speak();
+    Animal *dp = new Dog;   dp->speak();
 }
-
 
 // accepts a reference of a object from parent class Animal
 // speak() from Animal (parent) or Cat (child) will be called depending on whether it is virtual in parent or not
