@@ -32,7 +32,7 @@ public:
     void save();
 
     // check if the file is empty or not exist
-    //bool checkFileIsEmpty();
+    int checkFileStatus(ifstream &ifs);
 
     // get employee count
     int get_employeeCount();

@@ -4,34 +4,32 @@
 EmployeeManager::EmployeeManager() {
     ifstream ifs;
     ifs.open(FILENAME, ios::in);
-
-    // file not exist
-    if (!ifs.is_open()) {
-        cout << "file not exist" << endl;
-        this->employeeCount = 0;
-        this->empArray = NULL;
-        this->fileIsEmpty = true;
-        ifs.close();
-        return;
+    switch (this->checkFileStatus(ifs)) {
+        case 0:
+            cout << "file not exist" << endl;
+            this->employeeCount = 0;
+            this->empArray = NULL;
+            this->fileIsEmpty = true;
+            break;
+        case 1:
+            cout << "file is empty" << endl;
+            this->employeeCount = 0;
+            this->empArray = NULL;
+            this->fileIsEmpty = true;
+            break;
+        case 2:
+            cout << "file is read" << endl;
+            this->employeeCount = this->get_employeeCount();
+            this->empArray = new EmployeeType *[this->employeeCount];
+            this->init_employee();
+            break;
+        default:
+            this->employeeCount = 0;
+            this->empArray = NULL;
+            this->fileIsEmpty = true;
+            break;
     }
-
-    // file exists but is empty
-    char ch;
-    ifs >> ch;
-    if (ifs.eof()) {
-        cout << "file is empty" << endl;
-        this->employeeCount = 0;
-        this->empArray = NULL;
-        this->fileIsEmpty = true;
-        ifs.close();
-        return;
-    }
-
-    // file exists and with data in it
-    cout << "file read" << endl;
-    this->employeeCount = this->get_employeeCount();
-    this->empArray = new EmployeeType *[this->employeeCount];
-    this->init_employee();
+    ifs.close();
 }
 
 // destructor implementation
@@ -62,7 +60,17 @@ void EmployeeManager::save() {
 }
 
 // check if the file is empty or not exist
-//bool EmployeeManager::checkFileIsEmpty() {}
+int EmployeeManager::checkFileStatus(ifstream &ifs) {
+    if (!ifs.is_open())     // file not exist
+        return 0;
+    else {                  // file exist but is empty
+        char ch;
+        ifs >> ch;
+        if (ifs.eof())
+            return 1;
+    }
+    return 2;               // file exist and with data in it
+}
 
 // get employee count
 int EmployeeManager::get_employeeCount() {
