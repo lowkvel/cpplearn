@@ -2,13 +2,116 @@
 
 // constructor implementation
 EmployeeManager::EmployeeManager() {
-    this->employeeCount = 0;
-    this->empArray = NULL;
+    ifstream ifs;
+    ifs.open(FILENAME, ios::in);
+
+    // file not exist
+    if (!ifs.is_open()) {
+        cout << "file not exist" << endl;
+        this->employeeCount = 0;
+        this->empArray = NULL;
+        this->fileIsEmpty = true;
+        ifs.close();
+        return;
+    }
+
+    // file exists but is empty
+    char ch;
+    ifs >> ch;
+    if (ifs.eof()) {
+        cout << "file is empty" << endl;
+        this->employeeCount = 0;
+        this->empArray = NULL;
+        this->fileIsEmpty = true;
+        ifs.close();
+        return;
+    }
+
+    // file exists and with data in it
+    cout << "file read" << endl;
+    this->employeeCount = this->get_employeeCount();
+    this->empArray = new EmployeeType *[this->employeeCount];
+    this->init_employee();
 }
 
 // destructor implementation
 EmployeeManager::~EmployeeManager() {
+    if (this->empArray != NULL) {
+        delete[] this->empArray;
+        this->empArray = NULL;
+    }
+}
 
+// read file
+void EmployeeManager::read() {
+
+}
+
+// save file
+void EmployeeManager::save() {
+    ofstream ofs;
+    ofs.open(FILENAME, ios::out);
+
+    for (int i = 0; i < this->employeeCount; i++) {
+        ofs << this->empArray[i]->id << " "
+            << this->empArray[i]->name << " "
+            << this->empArray[i]->deptId << endl;
+    }
+
+    ofs.close();
+}
+
+// check if the file is empty or not exist
+//bool EmployeeManager::checkFileIsEmpty() {}
+
+// get employee count
+int EmployeeManager::get_employeeCount() {
+    ifstream ifs;
+    ifs.open(FILENAME, ios::in);
+
+    int id;
+    string name;
+    int deptId;
+    
+    int num = 0;
+    while (ifs >> id && ifs >> name && ifs >> deptId) 
+        num++;
+
+    ifs.close();
+
+    return num;
+}
+
+// init employee
+void EmployeeManager::init_employee() {
+    ifstream ifs;
+    ifs.open(FILENAME, ios::in);
+
+    int id;
+    string name;
+    int deptId;
+
+    int index = 0;
+    while (ifs >> id && ifs >> name && ifs >> deptId) {
+        EmployeeType *emp = NULL;
+        switch (deptId) {
+            case 1:
+                emp = new EmployeeTypeNormal(id, name, deptId);
+                break;
+            case 2:
+                emp = new EmployeeTypeManager(id, name, deptId);
+                break;
+            case 3:
+                emp = new EmployeeTypeBoss(id, name, deptId);
+                break;
+            default:
+                break;
+        }
+        this->empArray[index] = emp;
+        index++;
+    }
+
+    ifs.close();
 }
 
 // show menu implementation
@@ -83,8 +186,11 @@ void EmployeeManager::add() {
         // update employee count
         this->employeeCount = newSize;
 
-        // comment
+        // save to file, comment
+        this->save();
+        this->fileIsEmpty = false;
         cout << count << " employees added" << endl;
+
         system("clear");
     } else {
         cout << "wrong input" << endl;
