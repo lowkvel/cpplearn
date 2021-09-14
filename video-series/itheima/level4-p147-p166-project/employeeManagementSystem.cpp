@@ -47,6 +47,7 @@ void main_func() {
                 em.quit();
                 break;
             case 1:     // add
+                em.add();
                 break;
             case 3:     // show
                 break;
