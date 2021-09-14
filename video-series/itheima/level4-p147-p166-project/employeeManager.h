@@ -14,4 +14,7 @@ public:
 
     // show menu
     void showMenu();
+
+    // 0. quit
+    void quit();
 };

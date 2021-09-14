@@ -23,3 +23,9 @@ void EmployeeManager::showMenu() {
     cout << " 7. clear" << endl;
     cout << "***********" << endl;
 }
+
+// 0. quit implementation
+void EmployeeManager::quit() {
+    cout << "quitted" << endl;
+    exit(0);
+}

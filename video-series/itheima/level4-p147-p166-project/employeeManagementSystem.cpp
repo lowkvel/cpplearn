@@ -22,6 +22,7 @@ int main() {
         // switch choices
         switch (choice) {
             case 0:     // quit
+                em.quit();
                 break;
             case 1:     // add
                 break;
