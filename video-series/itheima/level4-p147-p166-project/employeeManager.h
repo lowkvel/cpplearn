@@ -66,4 +66,7 @@ public:
 
     // 6. sort
     void sort();
+
+    // 7. clear
+    void clear();
 };

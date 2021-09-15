@@ -65,6 +65,7 @@ void main_func() {
                 em.sort();
                 break;
             case 7:     // clear
+                em.clear();
                 break;
             default:    // clear screen
                 system("clear");

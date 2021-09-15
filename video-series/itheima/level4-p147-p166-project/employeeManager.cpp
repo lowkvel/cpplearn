@@ -36,8 +36,11 @@ EmployeeManager::EmployeeManager() {
 // destructor implementation
 EmployeeManager::~EmployeeManager() {
     if (this->empArray != NULL) {
-        delete[] this->empArray;
-        this->empArray = NULL;
+        for (int i = 0; i < this->employeeCount; i++)
+            if (this->empArray[i] != NULL)
+                delete this->empArray[i];   // delete every employee object in heap pool individually
+        this->employeeCount = 0;            // reset employee count
+        delete[] this->empArray;            // delete the array in heap pool
     }
 }
 
@@ -428,5 +431,30 @@ void EmployeeManager::sort() {
         // save file
         this->save();
         cout << "sort successful" << endl;
+    }
+}
+
+// clear implementation
+void EmployeeManager::clear() {
+
+    // double check
+    cout << "confirm clear all content? (1: yes; 2: no): " << endl;
+    int select = 0;
+    cin >> select;
+
+    if (select == 1) {
+        ofstream ofs(FILENAME, ios::trunc);
+        ofs.close();
+
+        if (this->empArray != NULL) {
+            for (int i = 0; i < this->employeeCount; i++)
+                if (this->empArray[i] != NULL)
+                    delete this->empArray[i];   // delete every employee object in heap pool individually
+            this->employeeCount = 0;            // reset employee count
+            delete[] this->empArray;            // delete the array in heap pool
+            this->empArray = NULL;              // nullify the pointer
+            this->fileIsEmpty = true;           // reset the file is empty flag
+        }
+        cout << "clear successful" << endl;
     }
 }
