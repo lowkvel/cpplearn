@@ -21,6 +21,7 @@ EmployeeManager::EmployeeManager() {
             cout << "file is read" << endl;
             this->employeeCount = this->get_employeeCount();
             this->empArray = new EmployeeType *[this->employeeCount];
+            this->fileIsEmpty = false;
             this->init_employee();
             break;
         default:
@@ -199,8 +200,18 @@ void EmployeeManager::add() {
         this->fileIsEmpty = false;
         cout << count << " employees added" << endl;
 
-        system("clear");
+        //system("clear");
     } else {
         cout << "wrong input" << endl;
     }
+}
+
+// 2. show implementation
+void EmployeeManager::show() {
+    if (this->fileIsEmpty)
+        cout << "file does not exist or is empty" << endl;
+    else
+        for (int i = 0; i < this->employeeCount; i++)
+            this->empArray[i]->showInfo();
+    //system("clear");
 }

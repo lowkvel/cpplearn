@@ -49,7 +49,10 @@ void main_func() {
             case 1:     // add
                 em.add();
                 break;
-            case 3:     // show
+            case 2:     // show
+                em.show();
+                break;
+            case 3:     // delete
                 break;
             case 4:     // modify
                 break;

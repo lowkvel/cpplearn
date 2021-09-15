@@ -48,4 +48,7 @@ public:
 
     // 1. add
     void add();
+
+    // 2. show
+    void show();
 };
