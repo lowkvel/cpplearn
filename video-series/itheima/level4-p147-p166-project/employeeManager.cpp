@@ -385,3 +385,48 @@ void EmployeeManager::find() {
         }
     }
 }
+
+// 6. sort implementation
+void EmployeeManager::sort() {
+    if (this->fileIsEmpty) 
+        cout << "file does not exist or is empty" << endl;
+    else {
+        // cin the sorting attribute needed
+        int selected = 0;
+        cout << "input sorting attribute to sort (1: id; 2: name; 3: dept id): " << endl;
+        cin >> selected;
+
+        // select sort
+        for (int i = 0; i < this->employeeCount; i++) {
+            int index = i;
+            for (int j = i + 1; j < this->employeeCount; j++)
+                switch (selected) {
+                    case 1:
+                        if (this->empArray[index]->id > this->empArray[j]->id)
+                            index = j;
+                        break;
+                    case 2:
+                        if (this->empArray[index]->name > this->empArray[j]->name)
+                            index = j;
+                        break;
+                    case 3:
+                        if (this->empArray[index]->deptId > this->empArray[j]->deptId)
+                            index = j;
+                        break;
+                    default:
+                        break;
+                }
+
+            // swap
+            if (i != index) {
+                EmployeeType *temp = this->empArray[i];
+                this->empArray[i] = this->empArray[index];
+                this->empArray[index] = temp;
+            }
+        }
+        
+        // save file
+        this->save();
+        cout << "sort successful" << endl;
+    }
+}

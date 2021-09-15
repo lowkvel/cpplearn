@@ -63,4 +63,7 @@ public:
 
     // 5. find
     void find();
+
+    // 6. sort
+    void sort();
 };
