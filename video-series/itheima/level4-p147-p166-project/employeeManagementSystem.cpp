@@ -56,6 +56,7 @@ void main_func() {
                 em.del();
                 break;
             case 4:     // modify
+                em.modify();
                 break;
             case 5:     // find
                 break;

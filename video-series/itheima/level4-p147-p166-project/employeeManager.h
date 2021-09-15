@@ -57,4 +57,7 @@ public:
 
     // 3. delete
     void del();
+
+    // 4. modify
+    void modify();
 };

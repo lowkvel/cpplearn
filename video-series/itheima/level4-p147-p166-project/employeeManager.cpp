@@ -250,3 +250,52 @@ void EmployeeManager::del() {
         }
     }
 }
+
+// 4. modify implementation
+void EmployeeManager::modify() {
+    if (this->fileIsEmpty) 
+        cout << "file does not exist or is empty" << endl;
+    else {
+        // cin the id needed
+        int id = -1;
+        cout << "input employee id to modify: " << endl;
+        cin >> id;
+
+        // get index of the id
+        int index = this->getIndex(id);
+        if (index == -1)
+            cout << "employee with id " << id << " does not exist" << endl;
+        else {
+            // delete the element in heap pool, but keep the pointer
+            delete this->empArray[index];
+
+            // get new infomation
+            int id;         cout << "input id: " << endl;       cin >> id;
+            string name;    cout << "input name: " << endl;     cin >> name;
+            int deptId;     cout << "input dept id (1:normal; 2:manager; 3:boss): " << endl;    cin >> deptId;
+
+            // create new EmployeeType object according to dept id
+            EmployeeType *emp = NULL;
+            switch (deptId) {
+                case 1:
+                    emp = new EmployeeTypeNormal(id, name, deptId);
+                    break;
+                case 2:
+                    emp = new EmployeeTypeManager(id, name, deptId);
+                    break;
+                case 3:
+                    emp = new EmployeeTypeBoss(id, name, deptId);
+                    break;
+                default:
+                    break;
+            }
+
+            // redirect to the newly created employee object
+            this->empArray[index] = emp;
+
+            // save file
+            this->save();
+            cout << "modify successful" << endl;
+        }
+    }
+}
