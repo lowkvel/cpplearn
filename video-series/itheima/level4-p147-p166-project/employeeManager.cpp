@@ -225,6 +225,28 @@ int EmployeeManager::getIndex(int id) {
 }
 
 // 3. delete implementation
-void EmployeeManager::del(int id) {
+void EmployeeManager::del() {
+    if (this->fileIsEmpty) 
+        cout << "file does not exist or is empty" << endl;
+    else {
+        // cin the id needed
+        int id = -1;
+        cout << "input employee id to delete: " << endl;
+        cin >> id;
 
+        // get index of the id
+        int index = this->getIndex(id);
+        if (index == -1)
+            cout << "employee with id " << id << " does not exist" << endl;
+        else {
+            // delete it and modify employee count
+            for (int i = index; i < this->employeeCount - 1; i++)
+                this->empArray[i] = this->empArray[i + 1];
+            this->employeeCount--;
+
+            // save file
+            this->save();
+            cout << "delete successful" << endl;
+        }
+    }
 }

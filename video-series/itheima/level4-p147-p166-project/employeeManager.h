@@ -56,5 +56,5 @@ public:
     int getIndex(int id);
 
     // 3. delete
-    void del(int id);
+    void del();
 };
