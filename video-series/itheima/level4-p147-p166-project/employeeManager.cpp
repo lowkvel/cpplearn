@@ -224,6 +224,22 @@ int EmployeeManager::getIndex(int id) {
     return -1;
 }
 
+/* todo
+int EmployeeManager::getIndex(int getway) {
+    switch (getway) {
+        case 1:     // employee id
+            break;
+        case 2:     // employee name
+            break;
+        case 3:     // employee department id
+            break;
+        default:
+            break;
+    }
+    return -1;
+}
+*/
+
 // 3. delete implementation
 void EmployeeManager::del() {
     if (this->fileIsEmpty) 
@@ -296,6 +312,76 @@ void EmployeeManager::modify() {
             // save file
             this->save();
             cout << "modify successful" << endl;
+        }
+    }
+}
+
+// 5. find implementation
+void EmployeeManager::find() {
+    if (this->fileIsEmpty) 
+        cout << "file does not exist or is empty" << endl;
+    else {
+        // cin the find method needed
+        int find_method = -1;
+        cout << "input find method(1. id; 2. name; 3. dept id): " << endl;
+        cin >> find_method;
+
+        switch (find_method) {
+            case 1: {
+                // cin the id needed
+                int id = -1;
+                cout << "input employee id to find: " << endl;
+                cin >> id;
+
+                // get index of the id, and display the result
+                int index = this->getIndex(id);
+                if (index == -1)
+                    cout << "employee with id " << id << " does not exist" << endl;
+                else
+                    this->empArray[index]->showInfo();
+
+                break;
+            }
+            case 2: {
+                // cin the name needed
+                string name = "";
+                cout << "input employee name to find: " << endl;
+                cin >> name;
+
+                // get indexes of the name, and display the result
+                bool flag = false;
+                for (int i = 0; i < this->employeeCount; i++) 
+                    if (this->empArray[i]->name == name) {
+                        flag = true;
+                        this->empArray[i]->showInfo();
+                    }
+                if (flag == false) {
+                    cout << "employee with name " << name << " does not exist" << endl;
+                }
+
+                break;
+            }
+            case 3: {
+                // cin the dept id needed
+                int deptId = 0;
+                cout << "input employee dept id to find: " << endl;
+                cin >> deptId;
+
+                // get indexes of the dept id, and display the result
+                bool flag = false;
+                for (int i = 0; i < this->employeeCount; i++) 
+                    if (this->empArray[i]->deptId == deptId) {
+                        flag = true;
+                        this->empArray[i]->showInfo();
+                    }
+                if (flag == false) {
+                    cout << "employee with dept Id " << deptId << " does not exist" << endl;
+                }
+
+                break;
+            }
+            default:
+                break;
         }
     }
 }

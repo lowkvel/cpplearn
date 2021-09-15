@@ -60,4 +60,7 @@ public:
 
     // 4. modify
     void modify();
+
+    // 5. find
+    void find();
 };

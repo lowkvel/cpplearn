@@ -59,6 +59,7 @@ void main_func() {
                 em.modify();
                 break;
             case 5:     // find
+                em.find();
                 break;
             case 6:     // sort
                 break;
