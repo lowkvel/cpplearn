@@ -215,3 +215,16 @@ void EmployeeManager::show() {
             this->empArray[i]->showInfo();
     //system("clear");
 }
+
+// get index of an employee given specific employee id implementation
+int EmployeeManager::getIndex(int id) {
+    for (int i = 0; i < this->employeeCount; i++)
+        if (this->empArray[i]->id == id)
+            return i;
+    return -1;
+}
+
+// 3. delete implementation
+void EmployeeManager::del(int id) {
+
+}

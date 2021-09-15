@@ -53,6 +53,7 @@ void main_func() {
                 em.show();
                 break;
             case 3:     // delete
+                //em.del();
                 break;
             case 4:     // modify
                 break;

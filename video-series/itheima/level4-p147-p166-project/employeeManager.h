@@ -51,4 +51,10 @@ public:
 
     // 2. show
     void show();
+
+    // get index of an employee given specific employee id
+    int getIndex(int id);
+
+    // 3. delete
+    void del(int id);
 };
