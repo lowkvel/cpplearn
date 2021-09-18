@@ -2,6 +2,25 @@
 
 using namespace std;
 
+template <typename NameType, typename AgeType>
+class Person {
+public:
+    NameType name;
+    AgeType age;
+
+public:
+    Person(NameType name, AgeType age) {
+        this->name = name;
+        this->age = age;
+    }
+
+    void showPerson() {
+        cout << this->name << " " << this->age << endl;
+    }
+};
+
+void func1();
+
 // p167-p173, template class
 int main() {
 
@@ -10,6 +29,12 @@ int main() {
     /*
         template class
 
+        0.  purpose
+            parameterize typename
+        1.  grammar
+            1.  declaration/definition: 
+                template <typename T>
+                class declaration/definition
     */
 
     func1();
@@ -20,5 +45,7 @@ int main() {
 }
 
 void func1() {
-
+    Person<string, int> p1("Ada", 1);
+    p1.showPerson();
+    
 }
