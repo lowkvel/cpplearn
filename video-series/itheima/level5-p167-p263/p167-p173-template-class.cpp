@@ -1,42 +1,47 @@
 # include <iostream>
 
+// 7.1  include the source code, not recommended
+//# include "p167-p173-template-class-person.cpp"
+// 7.2  put .h and .cpp together and include the renamed .hpp file, recommended
+# include "p167-p173-template-class-person.hpp"
+
 using namespace std;
 
-template <typename NameType, typename AgeType = int>
-class Person {
-public:
-    NameType name;
-    AgeType age;
+// template <typename NameType, typename AgeType = int>
+// class Person {
+// public:
+//     NameType name;
+//     AgeType age;
 
-public:
-    Person() { }
-    Person(NameType name, AgeType age);
-    // Person(NameType name, AgeType age) {
-    //     this->name = name;
-    //     this->age = age;
-    // }
+// public:
+//     Person() { }
+//     Person(NameType name, AgeType age);
+//     // Person(NameType name, AgeType age) {
+//     //     this->name = name;
+//     //     this->age = age;
+//     // }
 
-    void showPerson();
-    // void showPerson() { cout << this->name << " " << this->age << endl; }
+//     void showPerson();
+//     // void showPerson() { cout << this->name << " " << this->age << endl; }
 
-    void showTypeName() {
-        // cout << typeid(NameType).name << endl;
-        // cout << typeid(AgeType).name << endl;
-    }
-};
+//     void showTypeName() {
+//         // cout << typeid(NameType).name << endl;
+//         // cout << typeid(AgeType).name << endl;
+//     }
+// };
 
-// outside class member function implementation
-template <typename NameType, typename AgeType>
-Person<NameType, AgeType>::Person(NameType name, AgeType age) {
-    this->name = name;
-    this->age = age;
-}
+// // outside class member function implementation
+// template <typename NameType, typename AgeType>
+// Person<NameType, AgeType>::Person(NameType name, AgeType age) {
+//     this->name = name;
+//     this->age = age;
+// }
 
-// outside class member function implementation
-template <typename NameType, typename AgeType>
-void Person<NameType, AgeType>::showPerson() {
-    cout << this->name << " " << this->age << endl;
-}
+// // outside class member function implementation
+// template <typename NameType, typename AgeType>
+// void Person<NameType, AgeType>::showPerson() {
+//     cout << this->name << " " << this->age << endl;
+// }
 
 // inherited class Teacher becomes a concrete class now
 class Teacher: public Person <string, int> {
@@ -63,6 +68,12 @@ void func1();
 void printPerson31(Person<string, int> &p);
 template<typename NameType, typename AgeType> void printPerson32(Person<NameType, AgeType> &p);
 template<typename T> void printPerson33(T &p);
+
+// build command:
+// /usr/bin/clang++ -std=c++11 -g p167-p173-template-class.cpp p167-p173-template-class-person.cpp -o p167-p173-template-class
+/*
+    p167-p173-template-class.cpp p167-p173-template-class-person.cpp
+*/
 
 // p167-p173, template class
 int main() {
@@ -100,7 +111,14 @@ int main() {
             void Person<NameType, AgeType>::showPerson() {          // specify scope with typename <>
                 cout << this->name << " " << this->age << endl;
             }
-
+        7.  template class separated in .h and .cpp files
+            1.  we create .h and .cpp file like usual
+                but we include the separated file as .cpp instead of the usual way .h
+                    because class member function of template class will be created while running, not in compling stage
+                    so the compiler will compile the .h code only during compiling phase 
+                in this way, the compiler will compile the included .cpp file first
+                then the included .cpp file will have its included .h file compiled as well
+            2.  put .h and .cpp together and include the renamed .hpp file, recommended way for template class separation
     */
 
     func1();
