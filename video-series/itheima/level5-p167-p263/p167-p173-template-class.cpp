@@ -10,17 +10,33 @@ public:
 
 public:
     Person() { }
-    Person(NameType name, AgeType age) {
-        this->name = name;
-        this->age = age;
-    }
+    Person(NameType name, AgeType age);
+    // Person(NameType name, AgeType age) {
+    //     this->name = name;
+    //     this->age = age;
+    // }
 
-    void showPerson() { cout << this->name << " " << this->age << endl; }
+    void showPerson();
+    // void showPerson() { cout << this->name << " " << this->age << endl; }
+
     void showTypeName() {
-        //cout << typeid(NameType).name << endl;
-        //cout << typeid(AgeType).name << endl;
+        // cout << typeid(NameType).name << endl;
+        // cout << typeid(AgeType).name << endl;
     }
 };
+
+// outside class member function implementation
+template <typename NameType, typename AgeType>
+Person<NameType, AgeType>::Person(NameType name, AgeType age) {
+    this->name = name;
+    this->age = age;
+}
+
+// outside class member function implementation
+template <typename NameType, typename AgeType>
+void Person<NameType, AgeType>::showPerson() {
+    cout << this->name << " " << this->age << endl;
+}
 
 // inherited class Teacher becomes a concrete class now
 class Teacher: public Person <string, int> {
@@ -79,6 +95,12 @@ int main() {
         5.  inheritance for template class
             the declaration of child class of a template parent class need to explicitly specify the concrete type of T
             otherwise make the child class to be a template class as well
+        6.  implementation of class member function outside of class
+            template <typename NameType, typename AgeType>          // copy this from class definition without default typename
+            void Person<NameType, AgeType>::showPerson() {          // specify scope with typename <>
+                cout << this->name << " " << this->age << endl;
+            }
+
     */
 
     func1();
