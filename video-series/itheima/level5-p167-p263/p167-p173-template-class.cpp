@@ -48,10 +48,24 @@ class Teacher: public Person <string, int> {
 
 };
 
+// global function as friend outside of class
+template <typename IdType, typename NameType, typename AgeType> class Student;  // so the following implementation knows about Student
+template <typename IdType, typename NameType, typename AgeType>                 // so the following declaration knows about implementation
+void printStudent2(Student<IdType, NameType, AgeType> s) {
+    cout << s.id << " " << s.name << " " << s.age << endl;
+}
+
 // inherited class Teacher remains a template class
 template <typename IdType, typename NameType, typename AgeType>
 class Student: public Person <NameType, AgeType> {
-public:
+    // global function as friend inside of class
+    friend void printStudent1(Student<IdType, NameType, AgeType> s) {
+        cout << s.id << " " << s.name << " " << s.age << endl;
+    }
+    // global function as friend outside of class
+    friend void printStudent2<>(Student<IdType, NameType, AgeType> s);
+
+private:
     IdType id;
 
 public:
@@ -68,6 +82,10 @@ void func1();
 void printPerson31(Person<string, int> &p);
 template<typename NameType, typename AgeType> void printPerson32(Person<NameType, AgeType> &p);
 template<typename T> void printPerson33(T &p);
+
+// global function as friend inside of class
+template <typename IdType, typename NameType, typename AgeType> 
+void printStudent1(Student<IdType, NameType, AgeType> s);
 
 // build command:
 // /usr/bin/clang++ -std=c++11 -g p167-p173-template-class.cpp p167-p173-template-class-person.cpp -o p167-p173-template-class
@@ -119,6 +137,13 @@ int main() {
                 in this way, the compiler will compile the included .cpp file first
                 then the included .cpp file will have its included .h file compiled as well
             2.  put .h and .cpp together and include the renamed .hpp file, recommended way for template class separation
+        8.  friend
+            1.  implemented inside of class, just add friend without using scope
+            2.  implemented outside of class
+                1st, declare the class before the friend implementation
+                2nd, implement the friend before the definition of the class
+                3rd, then define the class
+            tedious
     */
 
     func1();
@@ -144,6 +169,11 @@ void func1() {
     // inheritance for template class
     Student<int, string, int> s1(4, "David", 4);    s1.showStudent();
 
+    // friend
+    Student<int, string, int> s2(5, "Friend", 5);
+    s2.showStudent();
+    printStudent1(s2);
+    printStudent2(s2);
 }
 
 // template class object as a parameter for function
