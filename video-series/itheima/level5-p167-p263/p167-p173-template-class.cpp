@@ -9,6 +9,7 @@ public:
     AgeType age;
 
 public:
+    Person() { }
     Person(NameType name, AgeType age) {
         this->name = name;
         this->age = age;
@@ -19,6 +20,27 @@ public:
         //cout << typeid(NameType).name << endl;
         //cout << typeid(AgeType).name << endl;
     }
+};
+
+// inherited class Teacher becomes a concrete class now
+class Teacher: public Person <string, int> {
+
+};
+
+// inherited class Teacher remains a template class
+template <typename IdType, typename NameType, typename AgeType>
+class Student: public Person <NameType, AgeType> {
+public:
+    IdType id;
+
+public:
+    Student(IdType id, NameType name, AgeType age) {
+        this->id = id;
+        this->name = name;
+        this->age = age;
+    }
+
+    void showStudent() { cout << this->id << " " << this->name << " " << this->age << endl; }
 };
 
 void func1();
@@ -54,6 +76,9 @@ int main() {
                 template<typename NameType, typename AgeType> void printPerson32(Person<NameType, AgeType> &p) {...}
             3.  parameter type is specified as pure template within <...> in function parameter list
                 template<typename T> void printPerson33(T &p) {...}
+        5.  inheritance for template class
+            the declaration of child class of a template parent class need to explicitly specify the concrete type of T
+            otherwise make the child class to be a template class as well
     */
 
     func1();
@@ -75,6 +100,10 @@ void func1() {
     printPerson31(p3);  // 1. parameter type is specified directly (<string, int>) within <...> in function parameter list
     printPerson32(p3);  // 2. parameter type is specified as template (Person<NameType, AgeType>) within <...> in function parameter list
     printPerson33(p3);  // 3. parameter type is specified as pure template (T &p) within <...> in function parameter list
+
+    // inheritance for template class
+    Student<int, string, int> s1(4, "David", 4);    s1.showStudent();
+
 }
 
 // template class object as a parameter for function
@@ -101,4 +130,5 @@ void printPerson33(T &p) {
     // ./p167-p173-template-class | c++filt -t
     cout << typeid(T).name() << endl;
 }
- 
+
+// inheritance for template class
