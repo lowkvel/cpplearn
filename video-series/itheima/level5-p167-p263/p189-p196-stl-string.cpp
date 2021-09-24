@@ -48,13 +48,18 @@ int main() {
             0.  a random number or -1 will be returned if target is not found
                 the string s will replace the range [p, p+n-1] from original string, so the length of replaced original may varies after replacement -> length_of(s) != n
         5.  compare
-
+            1.  int compare(const string &s) const;
+            2.  int compare(const char *s) const;
         6.  set & get
-
+            1.  char & operator[](int n);                   // get/set through []
+            2.  char & at(int n);                           // get/set through at()
         7.  insert & delete
-
+            1.  string & insert(int p, const char *s);      // insert string char *s at position p
+            2.  string & insert(int p, const string &s);    // insert string &s at position p
+            3.  string & insert(int p, int c, char c);      // insert multiple characters at position p
+            4.  string & erase(int p, int n = np);          // delete a substring with length n from s starting at position p
         8.  substring
-
+            1. string substr(int p = 0, int n = np) const;  // substring [p, p+n-1] from original string
     */
 
     func1();
@@ -128,7 +133,27 @@ void func1() {
     cout << s20.rfind(tf, 3, 1) << endl;
     cout << s20.rfind('2', 9) << " ";       // 8.  int rfind(const char c, int p = 0) const;           // 4. last, backwards
     cout << s20.rfind('2', 3) << endl;
-    cout << s20.replace(2, 4, "aaaa") << endl;  // 9.  string & replace(int p, int n, const string &s);  // replace the first n characters starting from position p of original string with string s
-    cout << s20.replace(2, 4, tf) << endl;      // 10. string & replace(int p, int n, const char *s);    // replace the first n characters starting from position p of original string with string char *s
+    cout << s20.replace(2, 4, "aaaa") << endl;  // 9.  string & replace(int p, int n, const string &s);     // replace the first n characters starting from position p of original string with string s
+    cout << s20.replace(2, 4, tf) << endl;      // 10. string & replace(int p, int n, const char *s);       // replace the first n characters starting from position p of original string with string char *s
 
+    // compare
+    string s21 = "s21"; const char *tf2 = "s23";
+    cout << s21.compare("s19") << " " << s21.compare("s21") << " " << s21.compare("s23") << endl;       // 1.  int compare(const string &s) const;
+    cout << s21.compare(tf2) << endl;                                                                   // 2.  int compare(const char *s) const;
+
+    // set & get
+    string s22 = "s22";
+    s22[1] = 'a';       cout << s22 << endl;        // 1.  char & operator[](int n);        // get/set through []
+    s22.at(2) = '3';    cout << s22 << endl;        // 2.  char & at(int n);                // get/set through at()
+
+    // insert & delete
+    string s23 = "s23"; const char *ti = "aa";
+    cout << s23.insert(1, ti) << endl;          // 1.  string & insert(int p, const char *s);      // insert string char *s at position p
+    cout << s23.insert(1, "bb") << endl;        // 2.  string & insert(int p, const string &s);    // insert string &s at position p
+    cout << s23.insert(1, 5, 'c') << endl;      // 3.  string & insert(int p, int c, char c);      // insert multiple characters at position p
+    cout << s23.erase(2, 3) << endl;            // 4.  string & erase(int p, int n = np);          // delete a substring with length n from s starting at position p
+
+    // substring
+    string s24 = "s24s24s24";
+    cout << s24.substr(1, 3) << endl;           // 1. string substr(int p = 0, int n = np) const;  // substring [p, p+n-1] from original string
 }
