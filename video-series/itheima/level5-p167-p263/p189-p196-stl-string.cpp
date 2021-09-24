@@ -27,15 +27,26 @@ int main() {
             6.  string & assign(const string &s);       // 2
             7.  string & assign(int n, char c);         // assign with multiple same characters
         3.  concatenation
-            1.  string & operator+=(const char *s);     // append string char *s
-            2.  string & operator+=(const string &s);   // append string &s
-            3.  string & operator+=(const char c);      // append char c
-            4.  string & append(const char *s);         // 1 above
-            5.  string & append(const char *s, int n);  // append first n characters of string char *s
-            6.  string & append(const string &s);       // 2 above
-            7.  string & append(const string &s, int p, int n); // append first n characters of string &s starting from position p
+            1.  string & operator+=(const char *s);                 // append string char *s
+            2.  string & operator+=(const string &s);               // append string &s
+            3.  string & operator+=(const char c);                  // append char c
+            4.  string & append(const char *s);                     // 1 above
+            5.  string & append(const char *s, int n);              // append first n characters of string char *s
+            6.  string & append(const string &s);                   // 2 above
+            7.  string & append(const string &s, int p, int n);     // append first n characters of string &s starting from position p
         4.  find & replace
-
+            1.  int find(const string &s, int p = 0) const;         // find the first position of string s, starting from position p
+            2.  int find(const char *s, int p = 0) const;           // find the first position of char *s, starting from position p
+            3.  int find(const char *s, int p, int n) const;        // fint the first position of the first n characters of char *s, starting from position p
+            4.  int find(const char c, int p = 0) const;            // find the first position of char c, starting from position p
+            5.  int rfind(const string &s, int p = np) const;       // 1. last, backwards
+            6.  int rfind(const char *s, int p = np) const;         // 2. last, backwards
+            7.  int rfind(const char *s, int p, int n) const;       // 3. last, backwards
+            8.  int rfind(const char c, int p = 0) const;           // 4. last, backwards
+            9.  string & replace(int p, int n, const string &s);    // replace the first n characters starting from position p of original string with string s
+            10. string & replace(int p, int n, const char *s);      // replace the first n characters starting from position p of original string with string char *s
+            0.  a random number or -1 will be returned if target is not found
+                the string s will replace the range [p, p+n-1] from original string, so the length of replaced original may varies after replacement -> length_of(s) != n
         5.  compare
 
         6.  set & get
@@ -99,5 +110,25 @@ void func1() {
     string s19 = "s19"; s19.append(s18, 1, 2);  // 7.  string & append(const string &s, int p, int n);      // append first n characters of string s starting from position p
     cout << s19 << endl;
     
-    
+    // find & replace
+    string s20 = "s20s20s20"; const char *tf = "20";
+    cout << s20.find(tf) << " ";            // 1.  int find(const string &s, int p = 0) const;         // find the first position of string s, starting from position p
+    cout << s20.find(tf, 3) << endl;
+    cout << s20.find("20") << " ";          // 2.  int find(const char *s, int p = 0) const;           // find the first position of char *s, starting from position p
+    cout << s20.find("20", 3) << endl;  
+    cout << s20.find(tf, 0, 1) << " ";      // 3.  int find(const char *s, int p, int n) const;        // fint the first position of the first n characters of char *s, starting from position p
+    cout << s20.find(tf, 3, 1) << endl;
+    cout << s20.find('2') << " ";           // 4.  int find(const char c, int p = 0) const;            // find the first position of char c, starting from position p
+    cout << s20.find('2', 3) << endl;
+    cout << s20.rfind(tf) << " ";           // 5.  int rfind(const string &s, int p = np) const;       // 1. last, backwards
+    cout << s20.rfind(tf, 3) << endl;
+    cout << s20.rfind("20") << " ";         // 6.  int rfind(const char *s, int p = np) const;         // 2. last, backwards
+    cout << s20.rfind("20", 3) << endl;
+    cout << s20.rfind(tf, 9, 1) << " ";     // 7.  int rfind(const char *s, int p, int n) const;       // 3. last, backwards
+    cout << s20.rfind(tf, 3, 1) << endl;
+    cout << s20.rfind('2', 9) << " ";       // 8.  int rfind(const char c, int p = 0) const;           // 4. last, backwards
+    cout << s20.rfind('2', 3) << endl;
+    cout << s20.replace(2, 4, "aaaa") << endl;  // 9.  string & replace(int p, int n, const string &s);  // replace the first n characters starting from position p of original string with string s
+    cout << s20.replace(2, 4, tf) << endl;      // 10. string & replace(int p, int n, const char *s);    // replace the first n characters starting from position p of original string with string char *s
+
 }
