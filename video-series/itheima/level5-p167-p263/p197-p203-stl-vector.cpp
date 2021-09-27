@@ -23,6 +23,12 @@ int main() {
             1.  vector& operator=(const vector &vec);   // overload =
             2.  assign(begin, end);                     // assign [v.begin(), v.end()), closed-open range
             3.  assign(n, element);                     // assign n * element
+        3.  capacity & size
+            1.  empty();                        // is empty?
+            2.  capacity();                     // max size
+            3.  size();                         // current size
+            4.  resize(int n);                  // resize capacity into n, delete the oversized element at the end or fill with default value
+            5.  resize(int n, element);         // resize capacity into n, delete the oversized element at the end or fill with given value element
     */
 
     func1();
@@ -44,6 +50,14 @@ void func1() {
     vector<int> v5 = v1;                                vectorPrinter(v5);  // overload =
     vector<int> v6; v6.assign(v5.begin(), v5.end());    vectorPrinter(v6);  // assign [v.begin(), v.end()), closed-open range
     vector<int> v7; v7.assign(10, 1);                   vectorPrinter(v7);  // assign n * element
+
+    // capacity & size
+    vector<int> v8 = v1; 
+    cout << v8.empty() << endl;
+    cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8);
+    v8.resize(20); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8);    // expansion with default int value 0
+    v8.resize(14); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8);    // shrinking and delete the oversized element at the end
+    v8.resize(18, 3); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8); // expansion with given int value 1
 }
 
 void vectorPrinter(vector <int> &v) {
