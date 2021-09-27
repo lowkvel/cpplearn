@@ -29,6 +29,14 @@ int main() {
             3.  size();                         // current size
             4.  resize(int n);                  // resize capacity into n, delete the oversized element at the end or fill with default value
             5.  resize(int n, element);         // resize capacity into n, delete the oversized element at the end or fill with given value element
+        4.  insert & delete
+            1.  push_back(e);                                       // add element e at the end
+            2.  pop_back();                                         // delete the last element
+            3.  insert(const_iterator p, e)                         // insert element e at position p
+            4.  insert(const_iterator p, int n, e);                 // insert n * element e at position p
+            5.  erase(const_iterator p);                            // delete element where iterator points
+            6.  erase(const_iterator start, const_iterator end);    // delete elements from start to end
+            7.  clear();                                            // delete all
     */
 
     func1();
@@ -58,6 +66,18 @@ void func1() {
     v8.resize(20); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8);    // expansion with default int value 0
     v8.resize(14); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8);    // shrinking and delete the oversized element at the end
     v8.resize(18, 3); cout << v8.capacity() << " " << v8.size() << ": "; vectorPrinter(v8); // expansion with given int value 1
+
+    // insert & delete
+    vector<int> v9 = v1;
+    v9.push_back(999); vectorPrinter(v9);               // add element e at the end
+    v9.pop_back(); vectorPrinter(v9);                   // delete the last element
+    v9.insert(v9.begin(), 999); vectorPrinter(v9);      // insert element e at position p
+    v9.insert(v9.begin(), 2, 999); vectorPrinter(v9);   // insert n * element e at position p
+    v9.erase(v9.begin()); vectorPrinter(v9);            // delete element where iterator points
+    v9.erase(v9.begin(), v9.end()); vectorPrinter(v9);  // delete elements from start to end
+    v9.clear(); vectorPrinter(v9);                      // delete all
+
+    
 }
 
 void vectorPrinter(vector <int> &v) {
