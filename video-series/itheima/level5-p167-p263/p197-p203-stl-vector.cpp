@@ -37,6 +37,11 @@ int main() {
             5.  erase(const_iterator p);                            // delete element where iterator points
             6.  erase(const_iterator start, const_iterator end);    // delete elements from start to end
             7.  clear();                                            // delete all
+        5.  get element
+            1.  at(int p);      // get element at position p
+            2.  operator[];     // get element through []
+            3.  front();        // get the first element
+            4.  back);          // get the last element
     */
 
     func1();
@@ -77,7 +82,9 @@ void func1() {
     v9.erase(v9.begin(), v9.end()); vectorPrinter(v9);  // delete elements from start to end
     v9.clear(); vectorPrinter(v9);                      // delete all
 
-    
+    // get element
+    vector<int> v10 = v1;
+    cout << v10.at(7) << " " << v10[7] << " " << v10.front() << " " << v10.back() << endl;
 }
 
 void vectorPrinter(vector <int> &v) {
