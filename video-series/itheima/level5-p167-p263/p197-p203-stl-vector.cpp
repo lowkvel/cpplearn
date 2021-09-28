@@ -54,6 +54,8 @@ int main() {
             then .swap() swaps the pointers direction, so swapped v13's capacity() reduces to the resize() capacity
             and because the .swap() swapped the original vector and the anonymous vector object, 
             makes the huge original vector become anonymous, so the compiler will delete it after this line of code executed (automatically freed)
+        7.  reserve
+            1.  reserve(int n);     // vector container reserve n capacity (reduce future expansion times), but it is inaccessible if not initialized already
     */
 
     func1();
@@ -121,6 +123,31 @@ void func1() {
     v13.resize(100);            cout << "v13r\t" << v13.capacity() << "\t" << v13.size() << endl;
     vector<int>(v13).swap(v13); cout << "v13rs\t" << v13.capacity() << "\t" << v13.size() << endl;
 
+    // reserve
+    vector<int> v16;
+    int n1 = 0; 
+    int *p1 = NULL;
+    for (int i = 0; i< 10000; i++) {
+        v16.push_back(i);
+        if (p1 != &v16[0]) {        // if p1 does not points to v16[0] which is the vector's first address
+            p1 = &v16[0];           // that means the vector got expanded or first initialized
+            n1++;
+        }
+    }
+    cout << n1 << endl;             // for 10000 element, 18 expansion (copy and paste) happens, time wasting
+
+    vector<int> v17;
+    v17.reserve(10000);             // this reserves 10000 capacity for v17
+    int n2 = 0; 
+    int *p2 = NULL;
+    for (int i = 0; i< 10000; i++) {
+        v17.push_back(i);
+        if (p2 != &v17[0]) {        // if p2 does not points to v17[0] which is the vector's first address
+            p2 = &v17[0];           // that means the vector got expanded or first initialized
+            n2++;
+        }
+    }
+    cout << n2 << endl;             // for 10000 element, only 1 initialization happens, time saving
 }
 
 void vectorPrinter(vector <int> &v) {
