@@ -27,8 +27,8 @@ int main() {
             1.  empty();                        // is empty?
             2.  capacity();                     // max size
             3.  size();                         // current size
-            4.  resize(int n);                  // resize capacity into n, delete the oversized element at the end or fill with default value
-            5.  resize(int n, element);         // resize capacity into n, delete the oversized element at the end or fill with given value element
+            4.  resize(int n);                  // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with default value
+            5.  resize(int n, element);         // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with given value element
         4.  insert & delete
             1.  push_back(e);                                       // add element e at the end
             2.  pop_back();                                         // delete the last element
@@ -42,6 +42,18 @@ int main() {
             2.  operator[];     // get element through []
             3.  front();        // get the first element
             4.  back);          // get the last element
+        6.  swap
+            1.  swap(v);        // swap two vectors
+            
+            vector<int>(v13) is a anonymous object [missing the variable name between ">("] created by vector copy constructor 
+            however vector copy constructor uses the to-be-copied vector's size() as new vector's capacity(), 
+            this reduces memory requirement for the newly copied vector
+                vector<int> v14(100,1);     // this gives v14 with capacity()=100 and size()=100
+                v14.resize(10);             // this reduces v14's size()=10, but capacity()=100 stay untouched
+                vector<int> v15(v14);       // copy constructor copys v14's size()=10 to v15 as its both capacity()=10 and size()=10
+            then .swap() swaps the pointers direction, so swapped v13's capacity() reduces to the resize() capacity
+            and because the .swap() swapped the original vector and the anonymous vector object, 
+            makes the huge original vector become anonymous, so the compiler will delete it after this line of code executed (automatically freed)
     */
 
     func1();
@@ -85,6 +97,30 @@ void func1() {
     // get element
     vector<int> v10 = v1;
     cout << v10.at(7) << " " << v10[7] << " " << v10.front() << " " << v10.back() << endl;
+
+    // swap
+    vector<int> v11 = v1; vectorPrinter(v11);
+    vector<int> v12 = v8; vectorPrinter(v12);
+    v11.swap(v12);                                      // swap two vectors
+    vectorPrinter(v11);
+    vectorPrinter(v12);
+
+    /*  the purpose of swap
+
+        vector<int>(v13) is a anonymous object [missing the variable name between ">("] created by vector copy constructor 
+        however vector copy constructor uses the to-be-copied vector's size() as new vector's capacity(), 
+        this reduces memory requirement for the newly copied vector
+            vector<int> v14(100,1);     // this gives v14 with capacity()=100 and size()=100
+            v14.resize(10);             // this reduces v14's size()=10, but capacity()=100 stay untouched
+            vector<int> v15(v14);       // copy constructor copys v14's size()=10 to v15 as its both capacity()=10 and size()=10
+        then .swap() swaps the pointers direction, so swapped v13's capacity() reduces to the resize() capacity
+        and because the .swap() swapped the original vector and the anonymous vector object, 
+        makes the huge original vector become anonymous, so the compiler will delete it after this line of code executed (automatically freed)
+    */
+    vector<int> v13(10000, 1);  cout << "v13\t" << v13.capacity() << "\t" << v13.size() << endl;
+    v13.resize(100);            cout << "v13r\t" << v13.capacity() << "\t" << v13.size() << endl;
+    vector<int>(v13).swap(v13); cout << "v13rs\t" << v13.capacity() << "\t" << v13.size() << endl;
+
 }
 
 void vectorPrinter(vector <int> &v) {
