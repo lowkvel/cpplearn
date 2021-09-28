@@ -30,6 +30,11 @@ int main() {
             1.  deque& operator=(const deque &d);   // overload =
             2.  assign(begin, end);                 // assign [d.begin(), d.end()), closed-open range
             3.  assign(n, element);                 // assign n * element
+        3.  capacity & size
+            1.  empty();                        // is empty?
+            2.  size();                         // current size
+            3.  resize(int n);                  // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with default value
+            4.  resize(int n, element);         // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with given value element
     */
 
     func1();
@@ -51,6 +56,14 @@ void func1() {
     deque<int> d5 = d1;                             dequePrinter(d5);   // overload =
     deque<int> d6; d6.assign(d5.begin(), d5.end()); dequePrinter(d6);   // assign [d.begin(), d.end()), closed-open range
     deque<int> d7; d7.assign(10, 7);                dequePrinter(d7);   // assign n * element
+
+    // capacity & size
+    deque<int> d8 = d1; 
+    cout << d8.empty() << endl;
+    cout << d8.size() << ": "; dequePrinter(d8);
+    d8.resize(20); cout <<  d8.size() << ": "; dequePrinter(d8);        // expansion with default int value 0
+    d8.resize(14); cout << d8.size() << ": "; dequePrinter(d8);         // shrinking and delete the oversized element at the end
+    d8.resize(18, 3); cout << d8.size() << ": "; dequePrinter(d8);      // expansion with given int value 1
 }
 
 void dequePrinter(const deque<int> &d) {
