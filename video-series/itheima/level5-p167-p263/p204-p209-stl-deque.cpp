@@ -26,6 +26,10 @@ int main() {
             2.  deque(d.begin(), d.end());          // copy [d.begin(), d.end()), closed-open range
             3.  deque(n, element);                  // construct n * element
             4.  deque(const deque &d);              // copy constructor
+        2.  assignment
+            1.  deque& operator=(const deque &d);   // overload =
+            2.  assign(begin, end);                 // assign [d.begin(), d.end()), closed-open range
+            3.  assign(n, element);                 // assign n * element
     */
 
     func1();
@@ -42,6 +46,11 @@ void func1() {
     deque<int> d2(d1.begin(), d1.end());            dequePrinter(d2);   // copy [d.begin(), d.end()), closed-open range
     deque<int> d3(10, 7);                           dequePrinter(d3);   // construct n * element
     deque<int> d4(d3);                              dequePrinter(d4);   // copy constructor
+
+    // assignment
+    deque<int> d5 = d1;                             dequePrinter(d5);   // overload =
+    deque<int> d6; d6.assign(d5.begin(), d5.end()); dequePrinter(d6);   // assign [d.begin(), d.end()), closed-open range
+    deque<int> d7; d7.assign(10, 7);                dequePrinter(d7);   // assign n * element
 }
 
 void dequePrinter(const deque<int> &d) {
