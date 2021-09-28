@@ -1,5 +1,6 @@
 # include <iostream>
 # include <deque>
+# include <algorithm>
 
 using namespace std;
 
@@ -46,6 +47,13 @@ int main() {
             8.  erase(const_iterator p);                            // delete element where iterator points
             9.  erase(const_iterator start, const_iterator end);    // delete elements from start to end
             10. clear();                                            // delete all
+        5.  get element
+            1.  at(int p);      // get element at position p
+            2.  operator[];     // get element through []
+            3.  front();        // get the first element
+            4.  back);          // get the last element
+        6.  sort
+            1.  sort(iterator begin, iterator end);
     */
 
     func1();
@@ -91,6 +99,18 @@ void func1() {
     deque<int>::iterator it22 = d9.end(); it22--; 
     d9.erase(it21, it22);                           dequePrinter(d9);   // delete elements from start to end
     d9.clear();                                     dequePrinter(d9);   // delete all
+
+    // get element
+    deque<int> d10 = d1;    dequePrinter(d10);
+    cout << d10.at(7) << " " << d10[7] << " " << d10.front() << " " << d10.back() << endl;
+
+    // sort
+    deque<int> d11;
+    d11.push_back(1);   d11.push_back(2);   d11.push_back(3);
+    d11.push_front(9);  d11.push_front(8);  d11.push_front(7);
+    dequePrinter(d11);
+    sort(d11.begin(), d11.end());
+    dequePrinter(d11);
 }
 
 void dequePrinter(const deque<int> &d) {
