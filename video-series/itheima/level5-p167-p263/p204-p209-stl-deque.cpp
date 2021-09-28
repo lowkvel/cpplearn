@@ -35,6 +35,17 @@ int main() {
             2.  size();                         // current size
             3.  resize(int n);                  // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with default value
             4.  resize(int n, element);         // resize size into n (capacity stays untouched), delete the oversized element at the end or fill with given value element
+        4.  insert & delete
+            1.  push_front(e);                                      // add element e at the head
+            2.  push_back(e);                                       // add element e at the end
+            3.  pop_front();                                        // delete the first element
+            4.  pop_back();                                         // delete the last element
+            5.  insert(const_iterator p, e)                         // insert element e at position p
+            6.  insert(const_iterator p, int n, e);                 // insert n * element e at position p
+            7.  insert(p, begin, end);                              // insert [d.begin(), d.end()) at position p
+            8.  erase(const_iterator p);                            // delete element where iterator points
+            9.  erase(const_iterator start, const_iterator end);    // delete elements from start to end
+            10. clear();                                            // delete all
     */
 
     func1();
@@ -61,9 +72,25 @@ void func1() {
     deque<int> d8 = d1; 
     cout << d8.empty() << endl;
     cout << d8.size() << ": "; dequePrinter(d8);
-    d8.resize(20); cout <<  d8.size() << ": "; dequePrinter(d8);        // expansion with default int value 0
-    d8.resize(14); cout << d8.size() << ": "; dequePrinter(d8);         // shrinking and delete the oversized element at the end
-    d8.resize(18, 3); cout << d8.size() << ": "; dequePrinter(d8);      // expansion with given int value 1
+    d8.resize(20); cout <<  d8.size() << ": ";      dequePrinter(d8);   // expansion with default int value 0
+    d8.resize(14); cout << d8.size() << ": ";       dequePrinter(d8);   // shrinking and delete the oversized element at the end
+    d8.resize(18, 3); cout << d8.size() << ": ";    dequePrinter(d8);   // expansion with given int value 1
+
+    // insert & delete
+    deque<int> d9 = d1;
+    d9.push_front(999);                             dequePrinter(d9);   // add element e at the end
+    d9.push_back(999);                              dequePrinter(d9);   // add element e at the end
+    d9.pop_front();                                 dequePrinter(d9);   // delete the first element
+    d9.pop_back();                                  dequePrinter(d9);   // delete the last element
+    d9.insert(d9.begin(), 999);                     dequePrinter(d9);   // insert element e at position p
+    d9.insert(d9.begin(), 2, 999);                  dequePrinter(d9);   // insert n * element e at position p
+    d9.insert(d9.begin(), d1.begin(), d1.end());    dequePrinter(d9);   // insert [d.begin(), d.end()) at position p
+    deque<int>::iterator it1 = d9.begin(); it1++;
+    d9.erase(it1);                                  dequePrinter(d9);   // delete element where iterator points
+    deque<int>::iterator it21 = d9.begin(); it21++;
+    deque<int>::iterator it22 = d9.end(); it22--; 
+    d9.erase(it21, it22);                           dequePrinter(d9);   // delete elements from start to end
+    d9.clear();                                     dequePrinter(d9);   // delete all
 }
 
 void dequePrinter(const deque<int> &d) {
