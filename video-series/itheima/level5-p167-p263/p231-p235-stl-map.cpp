@@ -3,8 +3,16 @@
 
 using namespace std;
 
+class mydes {
+public:
+    bool operator()(int v1, int v2) const {
+        return v1 > v2;
+    }
+};
+
 void func1();
 void mapPrinter(const map<int, int> &m);
+void mapPrinter2(const map<int, int, mydes> &m);
 
 // p231-p235, stl map
 int main() {
@@ -35,6 +43,7 @@ int main() {
         4.  find & count
             1.  find(key);                      // find specific pair, return a iterator if exists, otherwise return map.end()
             2.  count(key);                     // count element
+        5.  sort & functor
     */
 
     func1();
@@ -80,10 +89,20 @@ void func1() {
     map<int, int>::iterator pos = m7.find(3);
     pos != m7.end() ? cout << "found key: " << (*pos).first << "; count " << (*pos).first << ", " << (*pos).second << ": " << m7.count((*pos).first) << endl : cout << "not exist" << endl;
 
+    // sort & functor
+    map<int, int, mydes> m8;
+    for (int i = 0; i < 9; i++) m8.insert(pair<int, int>(i, i));    mapPrinter2(m8);
+
 }
 
 void mapPrinter(const map<int, int> &m) {
     for (map<int, int>::const_iterator it = m.begin(); it != m.end(); it++)
+        cout << (*it).first << ", " << (*it).second << "; ";
+    cout << endl;
+}
+
+void mapPrinter2(const map<int, int, mydes> &m) {
+    for (map<int, int, mydes>::const_iterator it = m.begin(); it != m.end(); it++)
         cout << (*it).first << ", " << (*it).second << "; ";
     cout << endl;
 }
