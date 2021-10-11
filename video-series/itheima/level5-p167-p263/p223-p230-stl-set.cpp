@@ -32,6 +32,9 @@ int main() {
             3.  erase(s.begin(), s.end());      // delete closed-open range elements
             4.  erase(element);                 // delete specific element
             5.  clear();                        // delete all
+        4.  find & count
+            1.  find(element);                  // find specific element, return a iterator if exists, otherwise return set.end()
+            2.  count(element);                 // count element
     */
 
     func1();
@@ -63,6 +66,11 @@ void func1() {
     set<int>::iterator it22 = s6.end(); it22--; it22--;
     s6.erase(it21, it22); setPrinter(s6);           // range position [2-5) deleted
     s6.clear();     setPrinter(s6);                 // delete all
+
+    // find & count
+    set<int> s7; for (int i = 0; i < 9; i++) s7.insert(i);  setPrinter(s7);
+    set<int>::iterator pos = s7.find(7);
+    pos != s7.end() ? cout << "found: " << *pos << "; count " << *pos << ": " << s7.count(*pos) << endl : cout << "not exist" << endl;
 }
 
 void setPrinter(const set<int> s) {
