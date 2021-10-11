@@ -26,6 +26,12 @@ int main() {
             1.  empty();
             2.  size();
             3.  swap(m);
+        3.  insert & delete
+            1.  insert(element);                // insert, 4 ways, shown below
+            2.  erase(position);
+            3.  erase(m.begin(), m.end());
+            4.  erase(key);
+            5.  clear();
     */
 
     func1();
@@ -49,6 +55,21 @@ void func1() {
     mapPrinter(m4); mapPrinter(m5);
     m4.swap(m5);
     mapPrinter(m4); mapPrinter(m5);
+
+    // insert & delete
+    map<int, int> m6;
+    for (int i = 0; i < 3; i++) m6.insert(pair<int, int>(i, i));                // way 1
+    for (int i = 3; i < 6; i++) m6.insert(make_pair(i, i));                     // way 2
+    for (int i = 6; i < 9; i++) m6.insert(map<int, int>::value_type(i, i));     // way 3
+    m6[9] = 9;                                                                  // way 4, not recommended for insertion
+    mapPrinter(m6);
+    map<int, int>::iterator it1 = m6.begin(); it1++; it1++;
+    m6.erase(m6.begin());   mapPrinter(m6);
+    map<int, int>::iterator it21 = m6.begin(); it21++; it21++;
+    map<int, int>::iterator it22 = m6.end(); it22--; it22--;
+    m6.erase(it21, it22);   mapPrinter(m6);
+    m6.erase(8);            mapPrinter(m6);
+    m6.clear();             mapPrinter(m6);
 }
 
 void mapPrinter(const map<int, int> &m) {
