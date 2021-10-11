@@ -22,6 +22,10 @@ int main() {
             1.  set<T> s;                       // default constructor
             2.  set(const set &s);              // copy constructor
             3.  set& operator=(const set &s);   // operator= overload
+        2.  size & swap
+            1.  empty();        // is empty?
+            2.  size();         // current size
+            3.  swap(s);        // swap two sets
     */
 
     func1();
@@ -37,6 +41,13 @@ void func1() {
     for (int i = 0; i < 5; i++) s1.insert(i);   setPrinter(s1);     // using insert to add element to set, auto-sort, no-duplicates (duplicates ommited?)
     set<int> s2(s1);                            setPrinter(s2);     // copy constructor
     set<int> s3; s3 = s1;                       setPrinter(s3);     // operator= overload
+
+    // size & swap
+    cout << s1.empty() << " " << s1.size() << endl;
+    set<int> s4; for (int i = 0; i < 5; i++) s4.insert(i);  setPrinter(s4);
+    set<int> s5; for (int i = 5; i < 9; i++) s5.insert(i);  setPrinter(s5);
+    s4.swap(s5); setPrinter(s4); setPrinter(s5);
+    
 }
 
 void setPrinter(const set<int> s) {
