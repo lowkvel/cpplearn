@@ -25,6 +25,11 @@ int main() {
             2.  assign(l.begin(), l.end());
             3.  assign(n, element);
             4.  swap(l);
+        3.  size & resize
+            1.  empty();                        // is empty?
+            2.  size();                         // current size
+            3.  resize(int n);                  // resize size into n, delete the oversized element at the end or fill with default value
+            4.  resize(int n, element);         // resize size into n, delete the oversized element at the end or fill with given value element
     */
 
     func1();
@@ -47,6 +52,14 @@ void func1() {
     list<int> l6; l6.assign(l1.begin(), l1.end());  listPrinter(l6);    // closed-open range assign
     list<int> l7; l7.assign(10, 1);                 listPrinter(l7);    // n element
     l7.swap(l6); listPrinter(l6); listPrinter(l7);                      // swap
+
+    // size & resize
+    list<int> l8 = l1;
+    cout << l8.empty() << " " << l8.size() << endl;     // empty, size
+    l8.resize(15);      listPrinter(l8);                // expansion with default value 0
+    l8.resize(20, 1);   listPrinter(l8);                // expansion with given value 1
+    l8.resize(5);       listPrinter(l8);                // shrinking
+    l8.resize(10);      listPrinter(l8);                // re-expansion with default value 0
 }
 
 void listPrinter(const list<int> &l) {
