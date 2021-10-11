@@ -3,8 +3,40 @@
 
 using namespace std;
 
+class Person {
+public:
+    string name;
+    int age;
+    int height;
+
+public:
+    Person(string name, int age, int height) {
+        this->name = name;
+        this->age = age;
+        this->height = height;
+    }
+};
+
+class mydes {
+public:
+    bool operator()(int v1, int v2) const {
+        return v1 > v2;
+    }
+};
+
+class mydesp {
+public:
+    bool operator()(const Person &p1, const Person &p2) const {
+        if (p1.age == p2.age)
+            return p1.height > p2.height;
+        return p1.age > p2.age;
+    }
+};
+
 void func1();
 void setPrinter(const set<int> s);
+void setPrinter2(const set<int, mydes> s);
+void personPrinter(const set<Person, mydesp> &s);
 void multisetPrinter(const multiset<int> s);
 
 // p223-p230, stl set
@@ -41,6 +73,8 @@ int main() {
         6.  pair
             1.  pair<type, type> p (value1, value2);
             2.  pair<type, type> p = make_pair(value1, value2);
+        7.  sort & functor
+            1.  sort
     */
 
     func1();
@@ -88,16 +122,40 @@ void func1() {
     multiset<int> s9; for (int i = 0; i < 9; i++) s9.insert(7);  multisetPrinter(s9);
 
     // pair
-    pair<string, int> p1 ("Ada", 1);
-    cout << p1.first << " " << p1.second << endl;
-    pair<string, int> p2 = make_pair("Bob", 2);
-    cout << p2.first << " " << p2.second << endl;
+    pair<string, int> pa1 ("Ada", 1);
+    cout << pa1.first << " " << pa1.second << endl;
+    pair<string, int> pa2 = make_pair("Bob", 2);
+    cout << pa2.first << " " << pa2.second << endl;
+
+    // sort & functor
+    // https://stackoverflow.com/questions/51235355/comparison-object-being-invocable-as-const 
+    set<int> s10; for (int i = 0; i < 10; i++) s10.insert(i);           setPrinter(s10);
+    set<int, mydes> s11; for (int i = 0; i < 10; i++) s11.insert(i);    setPrinter2(s11);
+    set<Person, mydesp> s12;
+    Person p1("a", 35, 175); s12.insert(p1);
+    Person p2("b", 45, 180); s12.insert(p2);
+    Person p3("c", 40, 170); s12.insert(p3);
+    Person p4("d", 25, 190); s12.insert(p4);
+    Person p5("e", 35, 160); s12.insert(p5);
+    Person p6("g", 35, 200); s12.insert(p6);
+    personPrinter(s12);
 }
 
 void setPrinter(const set<int> s) {
     for (set<int>::const_iterator it = s.begin(); it != s.end(); it++) 
         cout << *it << " ";
     cout << endl;
+}
+
+void setPrinter2(const set<int, mydes> s) {
+    for (set<int, mydes>::const_iterator it = s.begin(); it != s.end(); it++)
+        cout << *it << " ";
+    cout << endl;
+}
+
+void personPrinter(const set<Person, mydesp> &s) {
+    for (set<Person, mydesp>::const_iterator it = s.begin(); it != s.end(); it++)
+        cout << (*it).name << " " << (*it).age << " " << (*it).height << endl;
 }
 
 void multisetPrinter(const multiset<int> s) {
