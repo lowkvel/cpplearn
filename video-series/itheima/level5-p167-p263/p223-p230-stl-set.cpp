@@ -38,6 +38,9 @@ int main() {
             2.  count(element);                 // count element
         5.  multiset
             1.  multiset<T> ms;
+        6.  pair
+            1.  pair<type, type> p (value1, value2);
+            2.  pair<type, type> p = make_pair(value1, value2);
     */
 
     func1();
@@ -83,6 +86,12 @@ void func1() {
     ret2.second ? cout << "insert successful" << endl : cout << "insert unsuccessful" << endl;
 
     multiset<int> s9; for (int i = 0; i < 9; i++) s9.insert(7);  multisetPrinter(s9);
+
+    // pair
+    pair<string, int> p1 ("Ada", 1);
+    cout << p1.first << " " << p1.second << endl;
+    pair<string, int> p2 = make_pair("Bob", 2);
+    cout << p2.first << " " << p2.second << endl;
 }
 
 void setPrinter(const set<int> s) {
