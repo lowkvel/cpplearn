@@ -20,6 +20,11 @@ int main() {
             2.  list(l.begin(), l.end)();   // copy [begin, end), closed-open range
             3.  list(n, element);           // construct n * element
             4.  list(const list &l);        // copy constructor
+        2.  assign & swap
+            1.  list& operator=(const list &l);
+            2.  assign(l.begin(), l.end());
+            3.  assign(n, element);
+            4.  swap(l);
     */
 
     func1();
@@ -37,6 +42,11 @@ void func1() {
     list<int> l3(10, 1);                            listPrinter(l3);    // n element
     list<int> l4(l3);                               listPrinter(l4);    // pure copy
 
+    // assign & swap
+    list<int> l5 = l1;                              listPrinter(l5);    // operator= overload
+    list<int> l6; l6.assign(l1.begin(), l1.end());  listPrinter(l6);    // closed-open range assign
+    list<int> l7; l7.assign(10, 1);                 listPrinter(l7);    // n element
+    l7.swap(l6); listPrinter(l6); listPrinter(l7);                      // swap
 }
 
 void listPrinter(const list<int> &l) {
