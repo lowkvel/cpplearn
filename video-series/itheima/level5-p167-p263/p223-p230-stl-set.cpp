@@ -5,6 +5,7 @@ using namespace std;
 
 void func1();
 void setPrinter(const set<int> s);
+void multisetPrinter(const multiset<int> s);
 
 // p223-p230, stl set
 int main() {
@@ -35,6 +36,8 @@ int main() {
         4.  find & count
             1.  find(element);                  // find specific element, return a iterator if exists, otherwise return set.end()
             2.  count(element);                 // count element
+        5.  multiset
+            1.  multiset<T> ms;
     */
 
     func1();
@@ -71,10 +74,25 @@ void func1() {
     set<int> s7; for (int i = 0; i < 9; i++) s7.insert(i);  setPrinter(s7);
     set<int>::iterator pos = s7.find(7);
     pos != s7.end() ? cout << "found: " << *pos << "; count " << *pos << ": " << s7.count(*pos) << endl : cout << "not exist" << endl;
+
+    // multiset
+    set<int> s8; 
+    pair<set<int>::iterator, bool> ret1 = s8.insert(0);
+    ret1.second ? cout << "insert successful" << endl : cout << "insert unsuccessful" << endl;
+    pair<set<int>::iterator, bool> ret2 = s8.insert(0);
+    ret2.second ? cout << "insert successful" << endl : cout << "insert unsuccessful" << endl;
+
+    multiset<int> s9; for (int i = 0; i < 9; i++) s9.insert(7);  multisetPrinter(s9);
 }
 
 void setPrinter(const set<int> s) {
     for (set<int>::const_iterator it = s.begin(); it != s.end(); it++) 
+        cout << *it << " ";
+    cout << endl;
+}
+
+void multisetPrinter(const multiset<int> s) {
+    for (multiset<int>::const_iterator it = s.begin(); it != s.end(); it++) 
         cout << *it << " ";
     cout << endl;
 }
