@@ -4,10 +4,26 @@
 
 using namespace std;
 
+class Person {
+public:
+    string name;
+    int age;
+    int height;
+
+public:
+    Person(string name, int age, int height) {
+        this->name = name;
+        this->age = age;
+        this->height = height;
+    }
+};
+
 void func1();
 bool myasc(int v1, int v2);
 bool mydes(int v1, int v2);
+bool personSortRule(Person p1, Person p2);
 void listPrinter(const list<int> &l);
+void personPrinter(const list<Person> &l);
 
 // p215-p222, stl list
 int main() {
@@ -110,13 +126,34 @@ void func1() {
     l11.sort(myasc);        listPrinter(l11);   // sort ascending
     l11.sort(mydes);        listPrinter(l11);   // sort descending
     
+    // sort example
+    list<Person> l12;
+    Person p1("a", 35, 175); l12.push_back(p1);
+    Person p2("b", 45, 180); l12.push_back(p2);
+    Person p3("c", 40, 170); l12.push_back(p3);
+    Person p4("d", 25, 190); l12.push_back(p4);
+    Person p5("e", 35, 160); l12.push_back(p5);
+    Person p6("g", 35, 200); l12.push_back(p6);
+    personPrinter(l12);
+    l12.sort(personSortRule);
+    personPrinter(l12);
 }
 
 bool myasc(int v1, int v2) {return v1 < v2;}    // ascending
 bool mydes(int v1, int v2) {return v1 > v2;}    // descending
+bool personSortRule(Person p1, Person p2) {
+    if (p1.age == p2.age)
+        return p1.height > p2.height;
+    return p1.age < p2.age;
+}
 
 void listPrinter(const list<int> &l) {
     for (list<int>::const_iterator it = l.begin(); it != l.end(); it++)
         cout << *it << " ";
     cout << endl;
+}
+
+void personPrinter(const list<Person> &l) {
+    for (list<Person>::const_iterator it = l.begin(); it != l.end(); it++)
+        cout << (*it).name << " " << (*it).age << " " << (*it).height << endl;
 }
