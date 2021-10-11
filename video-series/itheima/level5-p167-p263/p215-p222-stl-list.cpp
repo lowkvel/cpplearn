@@ -5,6 +5,8 @@
 using namespace std;
 
 void func1();
+bool myasc(int v1, int v2);
+bool mydes(int v1, int v2);
 void listPrinter(const list<int> &l);
 
 // p215-p222, stl list
@@ -45,6 +47,9 @@ int main() {
         5.  get element
             1.  front();        // get the first element
             2.  back);          // get the last element
+        6.  reverse & sort
+            1.  reverse();      // reverse the list
+            2.  sort();         // sort the list
     */
 
     func1();
@@ -97,7 +102,18 @@ void func1() {
     // get element
     list<int> l10 = l1; listPrinter(l10);
     cout << l10.front() << " " << l10.back() << endl;
+
+    // reverse & sort
+    list<int> l11 = l1;     listPrinter(l11);
+    l11.reverse();          listPrinter(l11);   // reverse
+    l11.sort();             listPrinter(l11);   // sort
+    l11.sort(myasc);        listPrinter(l11);   // sort ascending
+    l11.sort(mydes);        listPrinter(l11);   // sort descending
+    
 }
+
+bool myasc(int v1, int v2) {return v1 < v2;}    // ascending
+bool mydes(int v1, int v2) {return v1 > v2;}    // descending
 
 void listPrinter(const list<int> &l) {
     for (list<int>::const_iterator it = l.begin(); it != l.end(); it++)
