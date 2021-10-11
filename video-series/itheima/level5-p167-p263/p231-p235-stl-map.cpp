@@ -32,6 +32,9 @@ int main() {
             3.  erase(m.begin(), m.end());
             4.  erase(key);
             5.  clear();
+        4.  find & count
+            1.  find(key);                      // find specific pair, return a iterator if exists, otherwise return map.end()
+            2.  count(key);                     // count element
     */
 
     func1();
@@ -70,6 +73,13 @@ void func1() {
     m6.erase(it21, it22);   mapPrinter(m6);
     m6.erase(8);            mapPrinter(m6);
     m6.clear();             mapPrinter(m6);
+
+    // find & count
+    map<int, int> m7;
+    for (int i = 0; i < 9; i++) m7.insert(pair<int, int>(i, i));    mapPrinter(m7);
+    map<int, int>::iterator pos = m7.find(3);
+    pos != m7.end() ? cout << "found key: " << (*pos).first << "; count " << (*pos).first << ", " << (*pos).second << ": " << m7.count((*pos).first) << endl : cout << "not exist" << endl;
+
 }
 
 void mapPrinter(const map<int, int> &m) {
