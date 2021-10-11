@@ -42,6 +42,9 @@ int main() {
             9.  erase(const_iterator start, const_iterator end);    // delete elements from start to end
             10. remove(e);                                          // delete all elements matching e
             11. clear();                                            // delete all
+        5.  get element
+            1.  front();        // get the first element
+            2.  back);          // get the last element
     */
 
     func1();
@@ -91,6 +94,9 @@ void func1() {
     l9.remove(99);                                  listPrinter(l9);    // remove
     l9.clear();                                     listPrinter(l9);    // clear
     
+    // get element
+    list<int> l10 = l1; listPrinter(l10);
+    cout << l10.front() << " " << l10.back() << endl;
 }
 
 void listPrinter(const list<int> &l) {
