@@ -1,4 +1,6 @@
 # include <iostream>
+# include <vector>
+# include <algorithm>
 
 using namespace std;
 
@@ -24,8 +26,14 @@ public:
     }
 };
 
+// predicate, single parameter
+class greaterThanFive { public: bool operator()(int v) { return v > 5; } };
+// predicate, double parameters
+class myDes { public: bool operator()(int v1, int v2) { return v1 > v2; } };
+
 void func1();
 void doPrint(myPrint &mp, string s);
+void func2();
 
 // p237-p242, functors & predicates
 int main() {
@@ -39,11 +47,13 @@ int main() {
             1.  use it like normal function, it can have parameter or return value
             2.  functors can have its own (internal) states
             3.  functors can get passed as parameters into other functions
-
+        2.  predicates
+            1.  definition: functor which has bool value type as its returns value
+            2.  types:      single/double parameter predicates
     */
 
-    // 1.   characteristics
-    func1();
+    func1();    // 1.   characteristics
+    func2();    // 2.   predicates
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
@@ -67,3 +77,16 @@ void func1() {
 }
 
 void doPrint(myPrint &mp, string s) { mp(s); }
+
+void func2() {
+    vector<int> v1; for (int i = 0; i < 10; i++) v1.push_back(i);
+    // using anonymous object here, can use normal form (greaterThanFive gtf) if desired
+    vector<int>::iterator it = find_if(v1.begin(), v1.end(), greaterThanFive());
+    it == v1.end() ? cout << "not found" << endl : cout << "found " << *it << endl;
+
+    vector<int> v2; for (int i = 0; i < 10; i++) v2.push_back(i);
+    // using anonymous object here,
+    sort(v2.begin(), v2.end(), myDes());
+    for (vector<int>::iterator it = v2.begin(); it != v2.end(); it++) cout << *it << " ";
+    cout << endl;
+}
