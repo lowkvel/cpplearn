@@ -3,7 +3,7 @@
 // 7.1  include the source code, not recommended
 //# include "p167-p173-template-class-person.cpp"
 // 7.2  put .h and .cpp together and include the renamed .hpp file, recommended
-# include "p167-p173-template-class-person.hpp"
+# include "p174-p181-template-class-person.hpp"
 
 using namespace std;
 
