@@ -30,6 +30,7 @@ void func1();   // traverse algorithms
 void func2();   // search algorithms
 void func3();   // sort algorithms
 void func4();   // copy & replace algorithms
+void func5();   // numeric & set algorithms
 void printInt(int v);
 void printVector(const vector<int> &v);
 
@@ -65,12 +66,20 @@ int main() {
             2.  replace(iterator1_begin, iterator1_end, old_value, new_value);
             3.  replace_if(iterator1_begin, iterator1_end, _Predicate, new_value);
             4.  swap(container c1, container c2);
+        5.  numeric & set algorithms
+            1.  accumulate(iterator_begin, iterator_end, value); 
+            2.  fill(iterator_begin, iterator_end, value); 
+            3.  set_intersection(iterator1_begin, iterator1_end, iterator2_begin, iterator2_end, iterator_dest_begin);
+            4.  set_union(iterator1_begin, iterator1_end, iterator2_begin, iterator2_end, iterator_dest_begin);
+            5.  set_difference(iterator1_begin, iterator1_end, iterator2_begin, iterator2_end, iterator_dest_begin);
+            0.  for 3 set operations, both containers must be ordered; a iterator points to the end of result is returned.
     */
 
     func1();    // traverse algorithms
     func2();    // search algorithms
     func3();    // sort algorithms
     func4();    // copy & replace algorithms
+    func5();    // numeric & set algorithms
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
@@ -183,6 +192,54 @@ void func4() {
     printVector(v4); printVector(v5);
     swap(v4, v5);
     printVector(v4); printVector(v5);
+}
+
+void func5() {
+    vector<int> v1; for (int i = 0; i < 9; i++) v1.push_back(i); v1.push_back(8);
+    vector<Person> v2;
+    Person p1("a", 1); v2.push_back(p1);
+    Person p2("b", 2); v2.push_back(p2);
+    Person p3("c", 3); v2.push_back(p3); v2.push_back(p3);
+    Person p4("d", 4);
+
+    // numeric & set algorithm, accumulate
+    cout << accumulate(v1.begin(), v1.end(), 0) << endl;
+
+    // numeric & set algorithm, fill
+    vector<int> v3 = v1;
+    vector<int>::iterator it = v3.begin(); it++; it++;
+    fill(it, v3.end(), 7);
+    printVector(v3);
+
+    // numeric & set algorithm, set_intersection
+    vector<int> v4; for (int i = 0; i < 7; i++) v4.push_back(i); printVector(v4);
+    vector<int> v5; for (int i = 3; i < 9; i++) v5.push_back(i); printVector(v5);
+    vector<int> si; si.resize(min(v4.size(), v5.size()));
+    vector<int>::iterator itend1 = set_intersection(v4.begin(), v4.end(), v5.begin(), v5.end(), si.begin());
+    for_each(si.begin(), itend1, printInt); cout << endl;
+    printVector(si);
+
+    // numeric & set algorithm, set_union
+    vector<int> su; su.resize(v4.size() + v5.size());
+    vector<int>::iterator itend2 = set_union(v4.begin(), v4.end(), v5.begin(), v5.end(), su.begin());
+    for_each(su.begin(), itend2, printInt); cout << endl;
+    printVector(su);
+
+    // numeric & set algorithm, set_difference
+    vector<int> sd1; sd1.resize(max(v4.size(), v5.size()));
+    vector<int>::iterator itend31 = set_difference(v4.begin(), v4.end(), v5.begin(), v5.end(), sd1.begin());
+    for_each(sd1.begin(), itend31, printInt); cout << endl;
+    printVector(sd1);
+
+    vector<int> sd2; sd2.resize(max(v4.size(), v5.size()));
+    vector<int>::iterator itend32 = set_difference(v5.begin(), v5.end(), v4.begin(), v4.end(), sd2.begin());
+    for_each(sd2.begin(), itend32, printInt); cout << endl;
+    printVector(sd2);
+
+    vector<int> sd; sd.resize(max(v4.size(), v5.size()));
+    vector<int>::iterator itend3 = set_union(sd1.begin(), itend31, sd2.begin(), itend32, sd.begin());
+    for_each(sd.begin(), itend3, printInt); cout << endl;
+    printVector(sd);
 }
 
 void printInt(int v) { cout << v << " "; }
