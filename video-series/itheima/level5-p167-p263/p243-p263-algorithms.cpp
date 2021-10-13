@@ -3,6 +3,7 @@
 # include <functional>
 # include <numeric>
 # include <vector>
+# include <ctime>
 
 using namespace std;
 
@@ -27,7 +28,9 @@ class greaterFivep { public: bool operator()(Person &p) { return p.age > 5; } };
 
 void func1();   // traverse algorithms
 void func2();   // search algorithms
+void func3();   // sort algorithms
 void printInt(int v);
+void printVector(const vector<int> &v);
 
 // p243-p263, algorithms
 int main() {
@@ -51,10 +54,16 @@ int main() {
             4.  binary_search(iterator_begin, iterator_end, value); 
             5.  count(iterator_begin, iterator_end, value); 
             6.  count_if(iterator_begin, iterator_end, _Predicate);
+        3.  sort algorithms
+            1.  sort(iterator_begin, iterator_end, _Predicate);
+            2.  random_shuffle(iterator_begin, iterator_end);
+            3.  merge(iterator1_begin, iterator1_end, iterator2_begin, iterator2_end, iterator_dest_begin);
+            4.  reverse(iterator_begin, iterator_end);
     */
 
     func1();    // traverse algorithms
     func2();    // search algorithms
+    func3();    // sort algorithms
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
@@ -114,4 +123,39 @@ void func2() {
     cout << count_if(v2.begin(), v2.end(), greaterFivep()) << endl;
 }
 
+void func3() {
+    vector<int> v1; for (int i = 0; i < 9; i++) v1.push_back(i); v1.push_back(8);
+    vector<Person> v2;
+    Person p1("a", 1); v2.push_back(p1);
+    Person p2("b", 2); v2.push_back(p2);
+    Person p3("c", 3); v2.push_back(p3); v2.push_back(p3);
+    Person p4("d", 4);
+
+    srand((unsigned int) time (NULL));
+
+    // sort algorithm, sort
+    vector<int> v3 = v1;
+    sort(v3.begin(), v3.end(), greater<int>());     printVector(v3);
+
+    // sort algorithm, random_shuffle
+    vector<int> v4 = v1;
+    random_shuffle(v4.begin(), v4.end());           printVector(v4);
+
+    // sort algorithm, merge
+    vector<int> v5 = v1;
+    vector<int> v6 = v1;
+    vector<int> v7; v7.resize(v5.size() + v6.size());       // resize here is required
+    merge(v5.begin(), v5.end(), v6.begin(), v6.end(), v7.begin());  printVector(v7);
+
+    // sort algorithm, reverse
+    vector<int> v8 = v1;
+    reverse(v8.begin(), v8.end());                  printVector(v8);
+}
+
 void printInt(int v) { cout << v << " "; }
+
+void printVector(const vector<int> &v) {
+    for (vector<int>::const_iterator it = v.begin(); it != v.end(); it++)
+        cout << *it << " ";
+    cout << endl;
+}
