@@ -29,6 +29,7 @@ class greaterFivep { public: bool operator()(Person &p) { return p.age > 5; } };
 void func1();   // traverse algorithms
 void func2();   // search algorithms
 void func3();   // sort algorithms
+void func4();   // copy & replace algorithms
 void printInt(int v);
 void printVector(const vector<int> &v);
 
@@ -59,11 +60,17 @@ int main() {
             2.  random_shuffle(iterator_begin, iterator_end);
             3.  merge(iterator1_begin, iterator1_end, iterator2_begin, iterator2_end, iterator_dest_begin);
             4.  reverse(iterator_begin, iterator_end);
+        4.  copy & replace algorithms
+            1.  copy(iterator1_begin, iterator1_end, iterator_dest_begin);
+            2.  replace(iterator1_begin, iterator1_end, old_value, new_value);
+            3.  replace_if(iterator1_begin, iterator1_end, _Predicate, new_value);
+            4.  swap(container c1, container c2);
     */
 
     func1();    // traverse algorithms
     func2();    // search algorithms
     func3();    // sort algorithms
+    func4();    // copy & replace algorithms
 
     //system("pause");    // use it in windows, effect [press any key to continue], no such command in linux/mac
 
@@ -150,6 +157,32 @@ void func3() {
     // sort algorithm, reverse
     vector<int> v8 = v1;
     reverse(v8.begin(), v8.end());                  printVector(v8);
+}
+
+void func4() {
+    vector<int> v1; for (int i = 0; i < 9; i++) v1.push_back(i); v1.push_back(8);
+    vector<Person> v2;
+    Person p1("a", 1); v2.push_back(p1);
+    Person p2("b", 2); v2.push_back(p2);
+    Person p3("c", 3); v2.push_back(p3); v2.push_back(p3);
+    Person p4("d", 4);
+
+    // copy & replace algorithm, copy
+    vector<int> v3; v3.resize(v1.size());
+    copy(v1.begin(), v1.end(), v3.begin());     printVector(v3);
+
+    // copy & replace algorithm, replace
+    vector<int> v4 = v1;
+    replace(v4.begin(), v4.end(), 8, 9);        printVector(v4);
+
+    // copy & replace algorithm, replace_if
+    vector<int> v5 = v1;
+    replace_if(v5.begin(), v5.end(), greaterFive(), 9);   printVector(v5);
+
+    // copy & replace algorithm, swap
+    printVector(v4); printVector(v5);
+    swap(v4, v5);
+    printVector(v4); printVector(v5);
 }
 
 void printInt(int v) { cout << v << " "; }
