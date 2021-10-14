@@ -11,4 +11,6 @@ public:
     ~SpeechManager();   // destructor
     
     void showMenu();    // show menu
+
+    void quitSystem();  // quit
 };
