@@ -1,7 +1,7 @@
 # include "speechManager.h"
 
 SpeechManager::SpeechManager() {
-
+    this->initSpeech();
 }
 
 SpeechManager::~SpeechManager() {
@@ -20,4 +20,12 @@ void SpeechManager::showMenu() {
 void SpeechManager::quitSystem() {
     cout << "quitted" << endl;
     exit(0);
+}
+
+void SpeechManager::initSpeech() {
+    this->round1s.clear();
+    this->round2s.clear();
+    this->winners.clear();
+    this->speakers.clear();
+    this->speechCount = 1;
 }
