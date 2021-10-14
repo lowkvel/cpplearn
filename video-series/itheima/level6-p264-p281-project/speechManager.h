@@ -16,6 +16,8 @@ public:
     vector<int> winners;            // winner speakers, 3
     map<int, Speaker> speakers;     // map
     int speechCount;                // speech rounds count
+    bool fileIsEmpty;
+    map<int, vector<string> > record;   // past result
 
 public:
     SpeechManager();    // constructor
@@ -39,4 +41,8 @@ public:
     void showWinners(const vector<int> &v);     // show winners
 
     void recordSaving(const vector<int> &v);    // record saving
+
+    void loadRecord();
+
+    void showRecord();
 };

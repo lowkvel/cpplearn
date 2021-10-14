@@ -7,6 +7,7 @@
 SpeechManager::SpeechManager() {
     this->initSpeech();
     this->createSpeaker();
+    this->loadRecord();
 }
 
 SpeechManager::~SpeechManager() {
@@ -33,6 +34,8 @@ void SpeechManager::initSpeech() {
     this->winners.clear();
     this->speakers.clear();
     this->speechCount = 0;
+    this->fileIsEmpty = true;
+    this->record.clear();
 }
 
 void SpeechManager::createSpeaker() {
@@ -64,6 +67,11 @@ void SpeechManager::speechContesting() {
     cout << "Winners!\n----------------------------" << endl;
     showWinners(winners);
     recordSaving(winners);
+
+    // reinitialize contest
+    this->initSpeech();
+    this->createSpeaker();
+    this->loadRecord();
 }
 
 void SpeechManager::speechSpeakersDraw() {
@@ -147,5 +155,67 @@ void SpeechManager::recordSaving(const vector<int> &v) {
     ofs << endl;
 
     ofs.close();
+    this->fileIsEmpty = false;
     cout << "--------------\nresults saved." << endl;
+}
+
+void SpeechManager::loadRecord() {
+    // open file
+    ifstream ifs("speech.csv", ios::in);
+
+    // file not exist
+    if (!ifs.is_open()) {
+        this->fileIsEmpty = true;
+        cout << "file not found." << endl;
+        ifs.close();
+        return;
+    }
+
+    // file is empty, no previous record exist
+    char ch;
+    ifs >> ch;
+    if (ifs.eof()) {
+        cout << "empty file." << endl;
+        this->fileIsEmpty = true;
+        ifs.close();
+        return;
+    }
+
+    // begin here
+    this->fileIsEmpty = false;
+
+    // load data
+    ifs.putback(ch);    // put the character back read above
+    string data;
+    int index = 0;
+    while (ifs >> data) {
+        vector<string> v;
+
+        int pos = -1;   // for posititon of ","
+        int start = 0;  // substr use this as start point
+
+        while (true) {
+            pos = data.find(",", start);    // find "," from position 0
+            if (pos == -1) break;           // break if no "," found
+
+            v.push_back(data.substr(start, pos - start));   // substring
+            start = pos + 1;                                // update start point
+        }
+
+        this->record.insert(make_pair(index, v));           // insert into record
+        index++;
+    }
+
+    // close ifs
+    ifs.close();
+}
+
+void SpeechManager::showRecord() {
+    if (this->fileIsEmpty) cout << "no record yet." << endl;
+
+    for (map<int, vector<string> >::iterator it = this->record.begin(); it != this->record.end(); it++)
+        cout << "Contest " << it->first + 1 << ": "
+            << it->second[0] << " " << it->second[1] << ", "
+            << it->second[2] << " " << it->second[3] << ", "
+            << it->second[4] << " " << it->second[5] << endl;
 }

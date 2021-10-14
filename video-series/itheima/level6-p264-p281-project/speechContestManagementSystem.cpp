@@ -1,4 +1,5 @@
 # include <iostream>
+# include <ctime>
 
 # include "speechManager.h"
 
@@ -13,6 +14,8 @@ speechContestManagementSystem.cpp speechManager.cpp
 */
 
 int main() {
+
+    srand((unsigned int) time (NULL));
 
     SpeechManager sm;
     int choice = 0;
@@ -32,6 +35,7 @@ int main() {
                 sm.speechContesting();
                 break;
             case 2:                 // previous
+                sm.showRecord();
                 break;
             case 3:                 // clear
                 break;
