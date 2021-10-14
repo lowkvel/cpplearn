@@ -2,6 +2,7 @@
 
 SpeechManager::SpeechManager() {
     this->initSpeech();
+    this->createSpeaker();
 }
 
 SpeechManager::~SpeechManager() {
@@ -28,4 +29,20 @@ void SpeechManager::initSpeech() {
     this->winners.clear();
     this->speakers.clear();
     this->speechCount = 1;
+}
+
+void SpeechManager::createSpeaker() {
+    string nameSeed = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    for (int i = 0; i < 12; i++) {
+        string name = "speaker_";
+        name += nameSeed[i];
+
+        Speaker sp;
+        sp.name = name;
+        for (int j = 0; j < 2; j++) sp.score[j] = 0;
+
+        this->round1s.push_back(i + 1);
+        this->speakers.insert(make_pair(i + 1, sp));
+    }
 }

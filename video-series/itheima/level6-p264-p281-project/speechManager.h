@@ -27,4 +27,6 @@ public:
 
     void initSpeech();  // speech container initialization
 
+    void createSpeaker();   // speaker creation
+
 };

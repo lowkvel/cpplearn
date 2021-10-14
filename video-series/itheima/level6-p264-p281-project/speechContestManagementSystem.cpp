@@ -17,6 +17,10 @@ int main() {
     SpeechManager sm;
     int choice = 0;
 
+    // tester
+    // for (map<int, Speaker>::iterator it = sm.speakers.begin(); it != sm.speakers.end(); it++)
+    //     cout << it->first << " " << it->second.name << " " << it->second.score[0] << " " << it->second.score[1] << endl;
+
     while (true) {
         sm.showMenu();
 
