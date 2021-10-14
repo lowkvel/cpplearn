@@ -61,8 +61,9 @@ void SpeechManager::speechContesting() {
     }
 
     // show & save result
-    cout << "Winners!\n--------------" << endl;
+    cout << "Winners!\n----------------------------" << endl;
     showWinners(winners);
+    recordSaving(winners);
 }
 
 void SpeechManager::speechSpeakersDraw() {
@@ -135,4 +136,16 @@ void SpeechManager::speechContest() {
 void SpeechManager::showWinners(const vector<int> &v) {
     for (vector<int>::const_iterator it = v.begin(); it != v.end(); it++)
         cout << *it << " " << this->speakers[*it].name << " " << this->speakers[*it].score[0] << " " << this->speakers[*it].score[1] << endl;
+}
+
+void SpeechManager::recordSaving(const vector<int> &v) {
+    ofstream ofs;
+    ofs.open("speech.csv", ios::out | ios::app);    // appending
+
+    for (vector<int>::const_iterator it = v.begin(); it != v.end(); it++)
+        ofs << *it << "," << this->speakers[*it].score[1] << ",";
+    ofs << endl;
+
+    ofs.close();
+    cout << "--------------\nresults saved." << endl;
 }

@@ -3,6 +3,7 @@
 # include <iostream>
 # include <vector>
 # include <map>
+# include <fstream>
 
 # include "speaker.h"
 
@@ -36,4 +37,6 @@ public:
     void speechContest();       // speech contest
 
     void showWinners(const vector<int> &v);     // show winners
+
+    void recordSaving(const vector<int> &v);    // record saving
 };
