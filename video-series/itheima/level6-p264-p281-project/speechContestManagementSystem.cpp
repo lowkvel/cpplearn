@@ -38,6 +38,7 @@ int main() {
                 sm.showRecord();
                 break;
             case 3:                 // clear
+                sm.clearRecord();
                 break;
             case 0:                 // quit
                 sm.quitSystem();

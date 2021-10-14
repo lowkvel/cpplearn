@@ -45,4 +45,6 @@ public:
     void loadRecord();
 
     void showRecord();
+
+    void clearRecord();
 };

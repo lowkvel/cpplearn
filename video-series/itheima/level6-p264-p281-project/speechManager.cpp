@@ -219,3 +219,21 @@ void SpeechManager::showRecord() {
             << it->second[2] << " " << it->second[3] << ", "
             << it->second[4] << " " << it->second[5] << endl;
 }
+
+void SpeechManager::clearRecord() {
+    cout << "confirm clear? (1. yes; 2. return)" << endl;
+
+    int select = 0;
+    cin >> select;
+
+    if (select == 1) {
+        ofstream ofs("speech.csv", ios::trunc);     // delete file then recreate an empty one
+        ofs.close();
+
+        this->initSpeech();
+        this->createSpeaker();
+        this->loadRecord();
+
+        cout << "record cleared." << endl;
+    }
+}
