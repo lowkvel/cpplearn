@@ -29,6 +29,7 @@ int main() {
 
         switch (choice) {
             case 1:                 // begin
+                sm.speechContesting();
                 break;
             case 2:                 // previous
                 break;

@@ -27,6 +27,9 @@ public:
 
     void initSpeech();  // speech container initialization
 
-    void createSpeaker();   // speaker creation
+    void createSpeaker();       // speaker creation
 
+    void speechContesting();    // speech contesting
+
+    void speechSpeakersDraw();  // draw speakers
 };
