@@ -6,6 +6,9 @@ using namespace std;
 
 class SpeechManager {
 public:
-    SpeechManager();
-    ~SpeechManager();
+    SpeechManager();    // constructor
+    
+    ~SpeechManager();   // destructor
+    
+    void showMenu();    // show menu
 };
