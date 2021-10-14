@@ -32,4 +32,8 @@ public:
     void speechContesting();    // speech contesting
 
     void speechSpeakersDraw();  // draw speakers
+
+    void speechContest();       // speech contest
+
+    void showWinners(const vector<int> &v);     // show winners
 };
