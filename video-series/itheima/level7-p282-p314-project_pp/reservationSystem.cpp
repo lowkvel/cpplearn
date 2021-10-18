@@ -4,10 +4,12 @@ using namespace std;
 
 int main_func();
 
-// build command:
-// /usr/bin/clang++ -std=c++11 -g reservationSystem.cpp -o reservationSystem
 /*
-reservationSystem.cpp 
+    build command:
+    /usr/bin/clang++ -std=c++11 -g reservationSystem.cpp student.cpp teacher.cpp manager.cpp -o reservationSystem
+    
+    files:
+    reservationSystem.cpp student.cpp teacher.cpp manager.cpp
 */
 
 int main() {
