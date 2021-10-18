@@ -9,8 +9,11 @@
 
 using namespace std;
 
-int main_func();
+void main_func();
 void login(string filename, int userType);
+void managerMenu(User * &m);
+void teacherMenu(User * &t);
+void studentMenu(User * &s);
 
 /*
     build command:
@@ -29,7 +32,7 @@ int main() {
     return 0;
 }
 
-int main_func() {
+void main_func() {
     int option = 0;
     while (true) {
         cout << "-----------------------------------" << endl;
@@ -40,7 +43,7 @@ int main_func() {
         cout << "[0] Quit" << endl;
         cout << "-----------------------------------" << endl;
 
-        cout << "Your choice: " << endl;
+        cout << "Your choice: ";
         cin >> option;
 
         switch (option) {
@@ -54,11 +57,11 @@ int main_func() {
                 login(MANAGER_FILE, 3);     // manager
                 break;
             case 0:             // quit system
-                cout << "Quitted." << endl;
-                return 0;
+                cout << "\nQuitted." << endl;
+                return;
                 break;
             default:            // wrong input
-                cout << "Wront input." << endl;
+                cout << "\nWront input." << endl;
                 break;
         }
     }
@@ -89,7 +92,7 @@ void login(string filename, int userType) {
     bool auth = false;
     while (ifs >> f_id && ifs >> f_name && ifs >> f_password)
         if (id == f_id && name == f_name && password == f_password) {
-            cout << "Authentication successful" << endl;
+            cout << "\nAuthentication successful" << endl;
             auth = true;
             break;
         }
@@ -99,11 +102,53 @@ void login(string filename, int userType) {
     User *user = NULL;     // polymorphism
     if (auth)
         switch (userType) {
-            case 1: user = new Student(id, name, password); return; break;
-            case 2: user = new Teacher(id, name, password); return; break;
-            case 3: user = new Manager(id, name, password); return; break;
+            case 1: user = new Student(id, name, password); studentMenu(user); return; break;
+            case 2: user = new Teacher(id, name, password); teacherMenu(user); return; break;
+            case 3: user = new Manager(id, name, password); managerMenu(user); return; break;
         }
 
     // authentication failed
-    cout << "Authentication failed" << endl;
+    cout << "\nAuthentication failed" << endl;
+}
+
+void managerMenu(User * &m) {
+    int option = 0;
+    while (true) {
+        m->operationMenu();                 // can only use user's member function only now
+        Manager * manager = (Manager *)m;   // explicit transform, to use manager's other member functions
+
+        cout << "Your choice: ";
+        cin >> option;
+
+        switch (option) {
+            case 1:
+                manager->addUser();
+                break;
+            case 2:
+                manager->showAllUsers();
+                break;
+            case 3:
+                manager->showComputerRooms();
+                break;
+            case 4:
+                manager->clearReservation();
+                break;
+            case 0:
+                delete manager;
+                cout << "\nLogout successful" << endl;
+                return;
+                break;
+            default:
+                cout << "\nWront input." << endl;
+                break;
+        }
+    }
+}
+
+void teacherMenu(User * &t) {
+
+}
+
+void studentMenu(User * &s) {
+
 }
