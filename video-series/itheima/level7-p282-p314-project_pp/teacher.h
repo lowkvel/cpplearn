@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Teacher {
+class Teacher: public User {
 /*
 public: 
     // member fields [int id, string name, string password] inherited from parent User
