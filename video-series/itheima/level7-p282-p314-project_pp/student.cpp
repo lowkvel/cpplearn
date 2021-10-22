@@ -91,7 +91,7 @@ void Student::showMyReservations() {
             cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
             cout << "status: ";
             if (res.reservations[i]["status"] == "1") cout << "under review";
-            else if (res.reservations[i]["status"] == "1") cout << "reserved";
+            else if (res.reservations[i]["status"] == "2") cout << "reserved";
             else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
             else cout << "reservation canceled";
             cout << endl;
@@ -115,7 +115,7 @@ void Student::showAllReservations() {
         cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
         cout << "status: ";
         if (res.reservations[i]["status"] == "1") cout << "under review";
-        else if (res.reservations[i]["status"] == "1") cout << "reserved";
+        else if (res.reservations[i]["status"] == "2") cout << "reserved";
         else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
         else cout << "reservation canceled";
         cout << endl;
@@ -144,7 +144,7 @@ void Student::cancelReservation() {
                 cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
                 cout << "status: ";
                 if (res.reservations[i]["status"] == "1") cout << "under review";
-                else if (res.reservations[i]["status"] == "1") cout << "reserved";
+                else if (res.reservations[i]["status"] == "2") cout << "reserved";
                 else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
                 else cout << "reservation canceled";
                 cout << endl;
