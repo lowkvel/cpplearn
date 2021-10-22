@@ -2,17 +2,21 @@
 
 # include <iostream>
 # include <fstream>
+# include <vector>
 
 # include "globalConstants.h"
 # include "user.h"
+# include "student.h"
+# include "teacher.h"
 
 using namespace std;
 
 class Manager: public User {
-/*
 public: 
     // member fields [int id, string name, string password] inherited from parent User
-*/
+    vector<Student> vs;
+    vector<Teacher> vt;
+    vector<Manager> vm;
 
 public:
     Manager();
@@ -28,4 +32,8 @@ public:
     void showComputerRooms();       // show all computer rooms
 
     void clearReservation();        // clear all reservations
+
+    void vstmInit();
+
+    bool checkDuplicates(int id, int userType);
 };
