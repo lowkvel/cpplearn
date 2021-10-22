@@ -121,26 +121,12 @@ void managerMenu(User * &m) {
         cin >> option;
 
         switch (option) {
-            case 1:
-                manager->addUser();
-                break;
-            case 2:
-                manager->showAllUsers();
-                break;
-            case 3:
-                manager->showComputerRooms();
-                break;
-            case 4:
-                manager->clearReservation();
-                break;
-            case 0:
-                delete manager;
-                cout << "\nLogout successful" << endl;
-                return;
-                break;
-            default:
-                cout << "\nWront input." << endl;
-                break;
+            case 1: manager->addUser();             break;
+            case 2: manager->showAllUsers();        break;
+            case 3: manager->showComputerRooms();   break;
+            case 4: manager->clearReservation();    break;
+            case 0: delete manager; cout << "\nLogout successful" << endl; return; break;
+            default: cout << "\nWrong input." << endl; break;
         }
     }
 }
@@ -150,5 +136,21 @@ void teacherMenu(User * &t) {
 }
 
 void studentMenu(User * &s) {
+    int option = 0;
+    while (true) {
+        s->operationMenu();                 // can only use user's member function only now
+        Student * student = (Student *)s;   // explicit transform, to use student's other member functions
 
+        cout << "Your choice: ";
+        cin >> option;
+
+        switch (option) {
+            case 1: student->makeReservation();     break;
+            case 2: student->showMyReservations();  break;
+            case 3: student->showAllReservations(); break;
+            case 4: student->cancelReservation();   break;
+            case 0: delete student; cout << "Logout successful" << endl; return; break;
+            default: cout << "\nWrong input." << endl; break;
+        }
+    }
 }
