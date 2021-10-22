@@ -122,5 +122,54 @@ void Student::showAllReservations() {
 }
 
 void Student::cancelReservation() {
+    Reservation res;
+    if (res.size == 0) {
+        cout << "No records" << endl;
+        return;
+    }
 
+    cout << "You may only cancel reservation which is under review or reserved" << endl;
+    vector<int> v;
+    int index = 1;
+    for (int i = 0; i < res.size; i++) {
+        if (atoi(res.reservations[i]["stuid"].c_str()) == this->id
+            && (res.reservations[i]["status"] == "1" || res.reservations[i]["status"] == "2")) {
+                v.push_back(i);
+                cout << i << " ";
+                cout << "date:" << res.reservations[i]["date"] << " ";
+                cout << "time:" << (res.reservations[i]["time"] == "1" ? "morning" : "afternoon") << " ";
+                cout << "room:" << res.reservations[i]["room"] << " ";
+                cout << "stu_id:" << res.reservations[i]["stuid"] << " ";
+                cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
+                cout << "status: ";
+                if (res.reservations[i]["status"] == "1") cout << "under review";
+                else if (res.reservations[i]["status"] == "1") cout << "reserved";
+                else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
+                else cout << "reservation canceled";
+                cout << endl;
+            }
+    }
+
+    cout << "Please choose a reservation to cancel [-1. return]: ";
+    int option = 0;
+    while (true) {
+        cin >> option;
+        if (option == -1) break;
+
+        bool existence = false;
+        if (option > 0) 
+            for (int i = 0; i < v.size(); i++) 
+                if (v[i] == option) {
+                    existence = true;
+                    break;
+                }
+        
+        if (existence) {
+            res.reservations[option]["status"] = "0";
+            res.updateReservation();
+            cout << "Reservation canceled" << endl;
+            break;
+        } else
+            cout << "Wrong input, please re-choose: ";
+    }
 }
