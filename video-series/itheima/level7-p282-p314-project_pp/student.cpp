@@ -77,10 +77,48 @@ void Student::makeReservation() {
 
 void Student::showMyReservations() {
     Reservation res;
+    if (res.size == 0) {
+        cout << "No records" << endl;
+        return;
+    }
+
+    for (int i = 0; i < res.size; i++) {
+        if (atoi(res.reservations[i]["stuid"].c_str()) == this->id) {
+            cout << "date:" << res.reservations[i]["date"] << " ";
+            cout << "time:" << (res.reservations[i]["time"] == "1" ? "morning" : "afternoon") << " ";
+            cout << "room:" << res.reservations[i]["room"] << " ";
+            cout << "stu_id:" << res.reservations[i]["stuid"] << " ";
+            cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
+            cout << "status: ";
+            if (res.reservations[i]["status"] == "1") cout << "under review";
+            else if (res.reservations[i]["status"] == "1") cout << "reserved";
+            else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
+            else cout << "reservation canceled";
+            cout << endl;
+        }
+    }
 }
 
 void Student::showAllReservations() {
+        Reservation res;
+    if (res.size == 0) {
+        cout << "No records" << endl;
+        return;
+    }
 
+    for (int i = 0; i < res.size; i++) {
+        cout << "date:" << res.reservations[i]["date"] << " ";
+        cout << "time:" << (res.reservations[i]["time"] == "1" ? "morning" : "afternoon") << " ";
+        cout << "room:" << res.reservations[i]["room"] << " ";
+        cout << "stu_id:" << res.reservations[i]["stuid"] << " ";
+        cout << "stu_name:" << res.reservations[i]["stuname"] << " ";
+        cout << "status: ";
+        if (res.reservations[i]["status"] == "1") cout << "under review";
+        else if (res.reservations[i]["status"] == "1") cout << "reserved";
+        else if (res.reservations[i]["status"] == "-1") cout << "reservation failed";
+        else cout << "reservation canceled";
+        cout << endl;
+    }
 }
 
 void Student::cancelReservation() {
