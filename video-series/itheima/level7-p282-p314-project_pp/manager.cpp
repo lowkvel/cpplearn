@@ -11,6 +11,7 @@ Manager::Manager(int id, string name, string password) {
     this->name = name;
     this->password = password;
 
+    this->vcInit();
     this->vstmInit();
 }
 
@@ -65,15 +66,44 @@ void Manager::addUser() {
 }
 
 void Manager::showAllUsers() {
+    int option;
+    while (true) {
+        cout << "Please choose a user type \n[1. Student; 2. Teacher; 3. Manager]: ";
+        cin >> option;
+        bool printed = false;
 
+        switch (option) {
+            case 1: 
+                for (vector<Student>::iterator it = vs.begin(); it != vs.end(); it++)
+                    cout << it->id << " " << it->name << " " << it->password << endl;
+                printed = true;
+                break;
+            case 2: 
+                for (vector<Teacher>::iterator it = vt.begin(); it != vt.end(); it++)
+                    cout << it->id << " " << it->name << " " << it->password << endl;
+                printed = true;
+                break;
+            case 3: 
+                for (vector<Manager>::iterator it = vm.begin(); it != vm.end(); it++)
+                    cout << it->id << " " << it->name << " " << it->password << endl;
+                printed = true;
+                break;
+            default: cout << "\nWrong input." << endl; break;
+        }
+
+        if (printed) break;
+    }
 }
 
 void Manager::showComputerRooms() {
-
+    for (vector<ComputerRoom>::iterator it = vc.begin(); it != vc.end(); it++)
+        cout << it->id << " " << it->maxNum << endl;
 }
 
 void Manager::clearReservation() {
-
+    ofstream ofs(RESERVATION_FILE, ios::trunc);
+    ofs.close();
+    cout << "All reservations cleared" << endl;
 }
 
 // init vstm vector for duplicates detection
@@ -96,6 +126,16 @@ void Manager::vstmInit() {
     ifs.open(MANAGER_FILE, ios::in);
     if (!ifs.is_open()) { cout << "File not exist." << endl; return; }
     while (ifs >> m.id && ifs >> m.name && ifs >> m.password) vm.push_back(m);
+    ifs.close();
+}
+
+// init vc vector
+void Manager::vcInit() {
+    ifstream ifs;
+    ifs.open(COMPUTER_FILE, ios::in);
+
+    ComputerRoom cr;
+    while (ifs >> cr.id && ifs >> cr.maxNum) vc.push_back(cr);
     ifs.close();
 }
 

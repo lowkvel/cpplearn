@@ -5,6 +5,7 @@
 # include <vector>
 
 # include "globalConstants.h"
+# include "computerRoom.h"
 # include "user.h"
 # include "student.h"
 # include "teacher.h"
@@ -17,6 +18,7 @@ public:
     vector<Student> vs;
     vector<Teacher> vt;
     vector<Manager> vm;
+    vector<ComputerRoom> vc;
 
 public:
     Manager();
@@ -34,6 +36,7 @@ public:
     void clearReservation();        // clear all reservations
 
     void vstmInit();
+    void vcInit();
 
     bool checkDuplicates(int id, int userType);
 };
