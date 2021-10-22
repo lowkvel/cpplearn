@@ -7,6 +7,7 @@
 # include "globalConstants.h"
 # include "computerRoom.h"
 # include "user.h"
+# include "reservation.h"
 
 using namespace std;
 

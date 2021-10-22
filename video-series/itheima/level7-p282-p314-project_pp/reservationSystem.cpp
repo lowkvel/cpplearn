@@ -17,10 +17,10 @@ void studentMenu(User * &s);
 
 /*
     build command:
-    /usr/bin/clang++ -std=c++11 -g reservationSystem.cpp student.cpp teacher.cpp manager.cpp -o reservationSystem
+    /usr/bin/clang++ -std=c++11 -g reservationSystem.cpp student.cpp teacher.cpp manager.cpp reservation.cpp -o reservationSystem
 
     files:
-    reservationSystem.cpp student.cpp teacher.cpp manager.cpp
+    reservationSystem.cpp student.cpp teacher.cpp manager.cpp reservation.cpp
 */
 
 int main() {

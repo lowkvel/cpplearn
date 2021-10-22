@@ -76,7 +76,7 @@ void Student::makeReservation() {
 }
 
 void Student::showMyReservations() {
-
+    Reservation res;
 }
 
 void Student::showAllReservations() {
