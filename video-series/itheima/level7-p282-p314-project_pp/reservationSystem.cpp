@@ -132,7 +132,21 @@ void managerMenu(User * &m) {
 }
 
 void teacherMenu(User * &t) {
+    int option = 0;
+    while (true) {
+        t->operationMenu();                 // can only use user's member function only now
+        Teacher * teacher = (Teacher *)t;   // explicit transform, to use teacher's other member functions
 
+        cout << "Your choice: ";
+        cin >> option;
+
+        switch (option) {
+            case 1: teacher->showAllReservations(); break;
+            case 2: teacher->validateReservation(); break;
+            case 0: delete teacher; cout << "Logout successful" << endl; return; break;
+            default: cout << "\nWrong input." << endl; break;
+        }
+    }
 }
 
 void studentMenu(User * &s) {

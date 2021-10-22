@@ -1,8 +1,10 @@
 # pragma once
 
 # include <iostream>
+# include <fstream>
 
 # include "user.h"
+# include "reservation.h"
 
 using namespace std;
 

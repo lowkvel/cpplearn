@@ -100,13 +100,14 @@ void Student::showMyReservations() {
 }
 
 void Student::showAllReservations() {
-        Reservation res;
+    Reservation res;
     if (res.size == 0) {
         cout << "No records" << endl;
         return;
     }
 
     for (int i = 0; i < res.size; i++) {
+        cout << i << " ";
         cout << "date:" << res.reservations[i]["date"] << " ";
         cout << "time:" << (res.reservations[i]["time"] == "1" ? "morning" : "afternoon") << " ";
         cout << "room:" << res.reservations[i]["room"] << " ";
