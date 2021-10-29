@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     */
 
     // create a file descriptor, everything under UNIX is file. 0:standard input; 1:standard output; 2:standard error
-    int serverSockFd;
-    if ((serverSockFd = socket(AF_INET, SOCK_STREAM, 0)) == -1)     // -1 is returned if socket initialization failed
+    int serverSocketFileDescriptor;
+    if ((serverSocketFileDescriptor = socket(AF_INET, SOCK_STREAM, 0)) == -1)     // -1 is returned if socket initialization failed
     {
         perror("socket");                                           // print fail message to stderr
         return -1;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     */ 
 
     // struct for server side address, including protocol, port, ip, etc
-    struct sockaddr_in servaddr;
+    struct sockaddr_in serverAddress;
     /*
         // Socket address, internet style.
         struct sockaddr_in {
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
         typedef unsigned int    __uint32_t;
     */
 
-    // initialize memory area assigned to &servaddr (a pointer is used here) with sizeof(servaddr) to 0, 
-    memset(&servaddr, 0, sizeof(servaddr));
+    // initialize memory area assigned to &serverAddress (a pointer is used here) with sizeof(serverAddress) to 0, 
+    memset(&serverAddress, 0, sizeof(serverAddress));
     /*
         memset()
         function:   specified memory area initialization, included in <string.h>
@@ -114,14 +114,14 @@ int main(int argc, char *argv[])
     */
 
     // protocol, the only protocol for socket is AF_INET/AF_INET6
-    servaddr.sin_family = AF_INET;
+    serverAddress.sin_family = AF_INET;
     /*
         #define AF_INET 2       //internetwork: UDP, TCP, etc. 
     */
 
     // ip, any server ip address is allowed (if server has multiple NICs)
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    // servaddr.sin_addr.s_addr = inet_addr("192.168.0.1");     // specific server ip address is allowed
+    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+    // serverAddress.sin_addr.s_addr = inet_addr("192.168.0.1");     // specific server ip address is allowed
     /*
         // 
         # define INADDR_ANY     (u_int32_t)0x00000000
@@ -143,13 +143,13 @@ int main(int argc, char *argv[])
     */
 
     // port, specify a port on server for incoming connection
-    servaddr.sin_port = htons(atoi(argv[1])); 
+    serverAddress.sin_port = htons(atoi(argv[1])); 
 
-    // bind ip, port and sizeof(servaddr) on socket file descriptor (serverSockFd)
-    if (bind(serverSockFd, (struct sockaddr *) &servaddr, sizeof(servaddr)) != 0)   // -1 is returned if socket binding failed, 0 otherwise
+    // bind ip, port and sizeof(serverAddress) on socket file descriptor (serverSocketFileDescriptor)
+    if (bind(serverSocketFileDescriptor, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) != 0)   // -1 is returned if socket binding failed, 0 otherwise
     {
         perror("bind");                                                             // print fail message to stderr
-        close(serverSockFd);
+        close(serverSocketFileDescriptor);
         return -1;
     }
     /*
@@ -173,4 +173,62 @@ int main(int argc, char *argv[])
         function:   bind ip and port (addr) with size (addrlen) on socket (sockfd), included in <socket.h>
         prototype:  int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
     */
+
+    /*
+        step 3, set socket on listen mode
+    */
+
+    // set socket on listen mode
+    if (listen(serverSocketFileDescriptor, 5) != 0) 
+    {
+        perror("listen");
+        close(serverSocketFileDescriptor);
+        return -1;
+    }
+
+    /* 
+        step 4, accept client's connection
+    */
+
+    // accept client's connection
+    int clientSocketFileDescriptor;                 // client side socket
+    int socklen = sizeof(struct sockaddr_in);
+    struct sockaddr_in clientAddress;               // client side address
+    clientSocketFileDescriptor = accept(serverSocketFileDescriptor, (struct sockaddr *) &clientAddress, (socklen_t *) &socklen);
+    printf("client (%s) connected.\n", inet_ntoa(clientAddress.sin_addr));
+
+    /*
+        step 5, communicate with client, accept data and return ok
+    */
+
+    // communicate with client, accept data and reply ok
+    char buffer[1024];
+    while (true)
+    {
+        int iret;
+        memset(buffer, 0, sizeof(buffer));
+
+        if ((iret = recv(clientSocketFileDescriptor, buffer, sizeof(buffer), 0)) <= 0)  // accepting data from client
+        {
+            printf("iret = %d\n", iret);
+            break;
+        }
+        printf("accepting: %s\n", buffer);
+
+        strcpy(buffer, "ok");
+        if ((iret = send(clientSocketFileDescriptor, buffer, strlen(buffer), 0)) <= 0)  // sending replies to client
+        {
+            perror("send");
+            break;
+        }
+        printf("sending: %s\n", buffer);
+    }
+
+    /*
+        step 6, close sockets, release resource
+    */
+
+    // close sockets, release resource
+    close(serverSocketFileDescriptor);
+    close(clientSocketFileDescriptor);
 }

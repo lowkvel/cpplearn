@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
     */
 
     // create a file descriptor, everything under UNIX is file. 0:standard input; 1:standard output; 2:standard error
-    int clientSockFd;
-    if ((clientSockFd = socket(AF_INET, SOCK_STREAM, 0)) == -1)     // -1 is returned if socket initialization failed
+    int clientSocketFileDescriptor;
+    if ((clientSocketFileDescriptor = socket(AF_INET, SOCK_STREAM, 0)) == -1)     // -1 is returned if socket initialization failed
     {
         perror("socket");                                           // print fail message to stderr
         return -1;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     if ((host = gethostbyname(argv[1])) == 0)
     {
         printf("gethostbyname failed.\n");
-        close(clientSockFd);
+        close(clientSocketFileDescriptor);
         return -1;
     }
     /*
@@ -69,19 +69,19 @@ int main(int argc, char *argv[])
     */
 
     // struct for server side address, including protocol, port, ip, etc
-    struct sockaddr_in servaddr;
+    struct sockaddr_in serverAddress;
 
-    // initialize memory area assigned to &servaddr with sizeof(servaddr) to 0
-    memset(&servaddr, 0, sizeof(servaddr));
+    // initialize memory area assigned to &serverAddress with sizeof(serverAddress) to 0
+    memset(&serverAddress, 0, sizeof(serverAddress));
 
     // protocol, AF_INET is used here
-    servaddr.sin_family = AF_INET;
+    serverAddress.sin_family = AF_INET;
 
     // port, specify a port on server for client to connect
-    servaddr.sin_port = htons(atoi(argv[2]));
+    serverAddress.sin_port = htons(atoi(argv[2]));
 
     // ip, 
-    memcpy(&servaddr.sin_addr, host->h_addr, host->h_length);
+    memcpy(&serverAddress.sin_addr, host->h_addr, host->h_length);
     /*
         memcpy()
         function:   specified memory area copy, copy src with sizeof(src) to dst on memory, included in <string.h>
@@ -94,15 +94,49 @@ int main(int argc, char *argv[])
     */
 
     // connect
-    if (connect(clientSockFd, (struct sockaddr *) &servaddr, sizeof(servaddr)) != 0)    // -1 is returned if connection failed, 0 otherwise
+    if (connect(clientSocketFileDescriptor, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) != 0)    // -1 is returned if connection failed, 0 otherwise
     {
         perror("connect");                                                              // print fail message to stderr
-        close(clientSockFd);
+        close(clientSocketFileDescriptor);
         return -1;
     }
     /*
         connect()
-        function:   connect to address (servaddr) using client socket file descriptor
+        function:   connect to address (serverAddress) using client socket file descriptor
         prototype:  int connect(int, const struct sockaddr *, socklen_t) __DARWIN_ALIAS_C(connect);
     */
+
+    /*
+        step 3, communicate with server, send data then wait for reply, then send next data
+    */
+
+    // communicate with server, send data then wait for reply, then send next data
+    char buffer[1024];
+    for (int i = 0; i < 3; i++)
+    {
+        int iret;
+        memset(buffer, 0, sizeof(buffer));
+        sprintf(buffer, "this is no %d data, no %03d.", i+1, i+1);
+        if ((iret = send(clientSocketFileDescriptor, buffer, strlen(buffer), 0)) <= 0)  // sending data to server
+        {
+            perror("send");
+            break;
+        }
+        printf("sending: %s\n", buffer);
+
+        memset(buffer, 0, sizeof(buffer));
+        if ((iret = recv(clientSocketFileDescriptor, buffer, sizeof(buffer), 0)) <= 0)  // accepting reply from server
+        {
+            printf("iret = %d\n", iret);
+            break;
+        }
+        printf("accepting: %s\n", buffer);
+    }
+
+    /*
+        step 4, close sockets, release resource
+    */
+
+    // close sockets, release resource
+    close(clientSocketFileDescriptor);
 }
