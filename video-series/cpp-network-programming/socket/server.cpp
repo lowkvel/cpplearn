@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
     // initialize memory area assigned to &servaddr (a pointer is used here) with sizeof(servaddr) to 0, 
     memset(&servaddr, 0, sizeof(servaddr));
     /*
+        memset()
         function:   specified memory area initialization, included in <string.h>
         prototype:  void *memset(void *__b, int __c, size_t __len);
                     s: can be a array (which is a pointer), or just a pointer points to a memory address (like struct)
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
         https://www.cnblogs.com/yhlboke-1992/p/9292877.html 
     */
 
-    // protocol, the only protocol for socket is AF_INET
+    // protocol, the only protocol for socket is AF_INET/AF_INET6
     servaddr.sin_family = AF_INET;
     /*
         #define AF_INET 2       //internetwork: UDP, TCP, etc. 
@@ -131,10 +132,20 @@ int main(int argc, char *argv[])
         htonl()     host(h) to(to) network(n) long(l)
         function:   transform a unsigned long (host byte order) into big-endian mode (network byte order), included in <arpa/inet.h>
         prototype:  uint32_t htonl(uint32_t hostlong);
+
+        inet_addr()
+        function:   transform a decimal ip address into a binary ip address under network byte order in long, included in <inet.h>
+        prototype:  in_addr_t inet_addr(const char *);
+
+        // ip
+        // base type for internet address
+        typedef __uint32_t      in_addr_t; 
     */
 
     // port, specify a port on server for incoming connection
     servaddr.sin_port = htons(atoi(argv[1])); 
+
+    // bind ip, port and sizeof(servaddr) on socket file descriptor (serverSockFd)
     if (bind(serverSockFd, (struct sockaddr *) &servaddr, sizeof(servaddr)) != 0)   // -1 is returned if socket binding failed, 0 otherwise
     {
         perror("bind");                                                             // print fail message to stderr
