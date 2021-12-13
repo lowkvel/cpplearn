@@ -32,6 +32,8 @@ void enableRawMode() {
     raw.c_oflag &= ~(OPOST);
     raw.c_cflag |= (CS8);
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+    raw.c_cc[VMIN] = 0;     // 0 chars is needed for return
+    raw.c_cc[VTIME] = 1;    // 0.1s timeout setting
     /*
         The c_lflag field is for “local flags”. 
         A comment in macOS’s <termios.h> describes it as a “dumping ground for other state”. 
@@ -80,6 +82,10 @@ void enableRawMode() {
         4.  CS8 is not a flag, it is a bit mask with multiple bits, 
             which we set using the bitwise-OR (|) operator unlike all the flags we are turning off. 
             It sets the character size (CS) to 8 bits per byte. 
+
+        VMIN & VMAX
+        The VMIN value sets the minimum number of bytes of input needed before read() can return.
+        The VTIME value sets the maximum amount of time to wait before read() returns.
     */                   
     
     // set a terminal’s attributes, TCSAFLUSH
@@ -95,13 +101,18 @@ int main() {
     // turn off echoing
     enableRawMode();
 
-    char c;
-    while (read(STDERR_FILENO, &c, 1) == 1 && c != 'q') {
+    while (1) {
+        char c = '\0';
+        read(STDIN_FILENO, &c, 1);          // read()
+
         if (iscntrl(c)) {                   // iscntrl() tests for control character (nonprintable)
             printf("%d\r\n", c);            // added carriage return \r because of OPOST turned off
         } else {
             printf("%d ('%c')\r\n", c, c);  // added carriage return \r because of OPOST turned off
         }
+
+        if (c == 'q')                       // break if 'q' is typed in
+            break;
     }
     /* 
         read() to read 1 byte from the standard input into the variable c, 
