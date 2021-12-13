@@ -26,7 +26,7 @@ void enableRawMode() {
     struct termios raw = original_termios;
 
     // modifythe termios struct to ~(ECHO)
-    raw.c_lflag &= ~(ECHO);  
+    raw.c_lflag &= ~(ECHO | ICANON);
     /*
         The c_lflag field is for “local flags”. 
         A comment in macOS’s <termios.h> describes it as a “dumping ground for other state”. 
@@ -43,6 +43,10 @@ void enableRawMode() {
         so you can see what you’re typing. So we turn it off. 
         This program does the same thing as the one in the previous step, 
         it just doesn’t print what you are typing. 
+
+        ICANON flag that allows us to turn off canonical mode. 
+        Now we are in raw mode, 
+        This means we will finally be reading input byte-by-byte, instead of line-by-line.
     */                   
     
     // set a terminal’s attributes, TCSAFLUSH
