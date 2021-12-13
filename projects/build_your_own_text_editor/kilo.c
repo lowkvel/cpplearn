@@ -1,6 +1,8 @@
 # include <unistd.h>
 # include <termios.h>
 # include <stdlib.h>
+# include <ctype.h>
+# include <stdio.h>
 
 // global variables
 struct termios original_termios;
@@ -63,7 +65,13 @@ int main() {
     enableRawMode();
 
     char c;
-    while (read(STDERR_FILENO, &c, 1) == 1 && c != 'q');
+    while (read(STDERR_FILENO, &c, 1) == 1 && c != 'q') {
+        if (iscntrl(c)) {       // iscntrl() tests for control character (nonprintable).
+            printf("%d\n", c);
+        } else {
+            printf("%d ('%c')\n", c, c);
+        }
+    }
     /* 
         read() to read 1 byte from the standard input into the variable c, 
         read() returns the number of bytes that it read (now should be 1), 
