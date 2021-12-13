@@ -12,7 +12,7 @@ int main() {
 
         by default the terminal starts in canonical mode, also called cooked mode.
     */
-    while (read(STDERR_FILENO, &c, 1) == 1);
+    while (read(STDERR_FILENO, &c, 1) == 1 && c != 'q');
 
     return 0;   // A return value of 0 indicates success
 }
