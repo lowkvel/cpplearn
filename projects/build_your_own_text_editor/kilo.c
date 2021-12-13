@@ -1,20 +1,44 @@
+/*** includes ***/
+
 # include <unistd.h>
 # include <termios.h>
 # include <stdlib.h>
 # include <ctype.h>
 # include <stdio.h>
+# include <errno.h>
 
-// global variables
+/*** data ***/
+
 struct termios original_termios;
 
+/*** terminal ***/
+
+void die(const char *s) {
+    // test using ./kilo <kilo.c
+
+    // set the global errno variable to indicate what the error was. From <stdio.h>
+    perror(s);
+    /*
+        perror() looks at the global errno variable and prints a descriptive error message for it. 
+        It also prints the string given to it before it prints the error message, 
+        which is meant to provide context about what part of your code caused the error.
+    */
+
+    // exit the program with an exit status of 1, From <stdlib.h>
+    // which indicates failure (as would any non-zero value).
+    exit(1);
+}
+
 void disableRawMode() {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios);
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios) == -1)
+        die("tcsetattr");
 }
 
 // turn off echoing
 void enableRawMode() {
     // get a terminal’s attributes into original_termios for backup
-    tcgetattr(STDERR_FILENO, &original_termios);
+    if (tcgetattr(STDERR_FILENO, &original_termios) == -1)
+        die("tcgetattr");
 
     // disable raw mode at exit using atexit() from <stdlib.h>
     atexit(disableRawMode);
@@ -89,7 +113,8 @@ void enableRawMode() {
     */                   
     
     // set a terminal’s attributes, TCSAFLUSH
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);   
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
+        die("tcsetattr");
     /*
         TCSAFLUSH argument specifies when to apply the change: 
         in this case, it waits for all pending output to be written to the terminal, 
@@ -97,13 +122,22 @@ void enableRawMode() {
     */
 }
 
+/*** init ***/
+
 int main() {
     // turn off echoing
     enableRawMode();
 
     while (1) {
         char c = '\0';
-        read(STDIN_FILENO, &c, 1);          // read()
+        if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) 
+            die("read");
+        /*
+            In Cygwin (Windows), 
+            when read() times out it returns -1 with an errno of EAGAIN, 
+            instead of just returning 0 like it’s supposed to. 
+            To make it work in Cygwin, we won’t treat EAGAIN as an error.
+        */
 
         if (iscntrl(c)) {                   // iscntrl() tests for control character (nonprintable)
             printf("%d\r\n", c);            // added carriage return \r because of OPOST turned off
