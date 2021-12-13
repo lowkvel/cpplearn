@@ -1,12 +1,29 @@
 # include <unistd.h>
 # include <termios.h>
+# include <stdlib.h>
+
+// global variables
+struct termios original_termios;
+
+void disableRawMode() {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios);
+}
 
 // turn off echoing
 void enableRawMode() {
-    struct termios raw;
+    // get a terminal’s attributes into original_termios for backup
+    tcgetattr(STDERR_FILENO, &original_termios);
 
-    // get a terminal’s attributes
-    tcgetattr(STDERR_FILENO, &raw); 
+    // disable raw mode at exit using atexit() from <stdlib.h>
+    atexit(disableRawMode);
+    /*
+        atexit() comes from <stdlib.h>. 
+        We use it to register our disableRawMode() function to be called automatically when the program exits, 
+        whether it exits by returning from main(), or by calling the exit() function. 
+    */
+
+    // initiaze a temp struct termios variable raw to original_termios for later modification
+    struct termios raw = original_termios;
 
     // modifythe termios struct to ~(ECHO)
     raw.c_lflag &= ~(ECHO);  
