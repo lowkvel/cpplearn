@@ -21,6 +21,10 @@ struct termios original_termios;
 void die(const char *s) {
     // test using ./kilo <kilo.c
 
+    // clear screen and reposiiton the cursor when error happens
+    write(STDOUT_FILENO, "\x1b[2J", 4);     // clear screen
+    write(STDOUT_FILENO, "\x1b[H", 3);      // reposition the cursor
+
     // set the global errno variable to indicate what the error was. From <stdio.h>
     perror(s);
     /*
@@ -151,13 +155,49 @@ void editorProcessKeypress() {
     char c = editorReadKey();
 
     switch (c) {
-        case CTRL_KEY('q'):     // exit if ctrl_q is typed in
+        case CTRL_KEY('q'):                         // exit if ctrl_q is typed in
+            write(STDOUT_FILENO, "\x1b[2J", 4);     // clear screen
+            write(STDOUT_FILENO, "\x1b[H", 3);      // reposition the cursor
             exit(0);
             break;
-        case 'q':               // exit if 'q' is typed in
+        case 'q':                                   // exit if 'q' is typed in
+            write(STDOUT_FILENO, "\x1b[2J", 4);     // clear screen
+            write(STDOUT_FILENO, "\x1b[H", 3);      // reposition the cursor
             exit(0);
             break;
     }
+}
+
+/*** output ***/
+void editorRefreshScreen() {
+    // clear screen
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    /*
+        The 4 in our write() call means we are writing 4 bytes out to the terminal. 
+        The first byte is \x1b, which is the escape character, or 27 in decimal. 
+        The other three bytes are [2J
+
+        We are using the J command (Erase In Display) to clear the screen. -> J
+        Escape sequence commands take arguments, which come before the command. -> 2J
+        In this case the argument is 2, which says to clear the entire screen. 
+        <esc>[1J would clear the screen up to where the cursor is, 
+        <esc>[0J would clear the screen from the cursor up to the end of the screen.
+            Also, 0 is the default argument for J, 
+            so just <esc>[J by itself would also clear the screen from the cursor to the end.
+    */
+
+    // reposition the cursor
+    write(STDOUT_FILENO, "\x1b[H", 3);
+    /*
+        This escape sequence is only 3 bytes long, and uses the H command (Cursor Position) to position the cursor. 
+        The H command actually takes two arguments: 
+            the row number and the column number at which to position the cursor. 
+        So if you have an 80×24 size terminal and you want the cursor in the center of the screen, 
+        you could use the command <esc>[12;40H. (Multiple arguments are separated by a ; character.) 
+        The default arguments for H both happen to be 1, 
+        so we can leave both arguments out and it will position the cursor at the first row and first column, 
+        as if we had sent the <esc>[1;1H command. (Rows and columns are numbered starting at 1, not 0.)
+    */
 }
 
 /*** init ***/
@@ -167,7 +207,8 @@ int main() {
     enableRawMode();
 
     while (1) {
-        editorProcessKeypress();
+        editorRefreshScreen();
+        editorProcessKeypress();    // waits for a keypress, and then handles it
     }
     /* 
         read() to read 1 byte from the standard input into the variable c, 
