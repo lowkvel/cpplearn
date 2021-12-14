@@ -127,15 +127,12 @@ void enableRawMode() {
     */
 }
 
-/*** init ***/
-
-int main() {
-    // turn off echoing
-    enableRawMode();
-
-    while (1) {
-        char c = '\0';
-        if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) 
+// wait for one keypress, and return it
+char editorReadKey() {
+    int nread;
+    char c;
+    while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+        if (nread == -1 && errno != EAGAIN)
             die("read");
         /*
             In Cygwin (Windows), 
@@ -143,15 +140,34 @@ int main() {
             instead of just returning 0 like it’s supposed to. 
             To make it work in Cygwin, we won’t treat EAGAIN as an error.
         */
+    }
+    return c;
+}
 
-        if (iscntrl(c)) {                   // iscntrl() tests for control character (nonprintable)
-            printf("%d\r\n", c);            // added carriage return \r because of OPOST turned off
-        } else {
-            printf("%d ('%c')\r\n", c, c);  // added carriage return \r because of OPOST turned off
-        }
+/*** input ***/
 
-        if (c == CTRL_KEY('q') || c == 'q') // break if 'q' is typed in
+// waits for a keypress, and then handles it
+void editorProcessKeypress() {
+    char c = editorReadKey();
+
+    switch (c) {
+        case CTRL_KEY('q'):     // exit if ctrl_q is typed in
+            exit(0);
             break;
+        case 'q':               // exit if 'q' is typed in
+            exit(0);
+            break;
+    }
+}
+
+/*** init ***/
+
+int main() {
+    // turn off echoing
+    enableRawMode();
+
+    while (1) {
+        editorProcessKeypress();
     }
     /* 
         read() to read 1 byte from the standard input into the variable c, 
