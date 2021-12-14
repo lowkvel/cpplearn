@@ -169,6 +169,14 @@ void editorProcessKeypress() {
 }
 
 /*** output ***/
+
+void editorDrawRows() {
+    int y;
+    for (y = 0; y < 24; y++) {
+        write(STDOUT_FILENO, "~\r\n", 3);
+    }
+}
+
 void editorRefreshScreen() {
     // clear screen
     write(STDOUT_FILENO, "\x1b[2J", 4);
@@ -198,6 +206,10 @@ void editorRefreshScreen() {
         so we can leave both arguments out and it will position the cursor at the first row and first column, 
         as if we had sent the <esc>[1;1H command. (Rows and columns are numbered starting at 1, not 0.)
     */
+
+    // 
+    editorDrawRows();
+    write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /*** init ***/
