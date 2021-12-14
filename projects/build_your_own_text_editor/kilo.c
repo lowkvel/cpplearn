@@ -6,6 +6,7 @@
 # include <ctype.h>
 # include <stdio.h>
 # include <errno.h>
+# include <sys/ioctl.h>
 
 /*** defines ***/
 
@@ -13,8 +14,13 @@
 # define CTRL_KEY(k) ((k) & 0x1f)
 
 /*** data ***/
+struct editorConfig {
+    int screenRows;
+    int screenCols;
+    struct termios original_termios;
+};
 
-struct termios original_termios;
+struct editorConfig E;
 
 /*** terminal ***/
 
@@ -39,14 +45,14 @@ void die(const char *s) {
 }
 
 void disableRawMode() {
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios) == -1)
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.original_termios) == -1)
         die("tcsetattr");
 }
 
 // turn off echoing
 void enableRawMode() {
     // get a terminal’s attributes into original_termios for backup
-    if (tcgetattr(STDERR_FILENO, &original_termios) == -1)
+    if (tcgetattr(STDERR_FILENO, &E.original_termios) == -1)
         die("tcgetattr");
 
     // disable raw mode at exit using atexit() from <stdlib.h>
@@ -58,7 +64,7 @@ void enableRawMode() {
     */
 
     // initiaze a temp struct termios variable raw to original_termios for later modification
-    struct termios raw = original_termios;
+    struct termios raw = E.original_termios;
 
     // modifythe termios struct
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK| ISTRIP| IXON);
@@ -148,6 +154,19 @@ char editorReadKey() {
     return c;
 }
 
+int getWindowSize(int *rows, int *cols) {
+    struct winsize ws;
+
+    // get the size of the terminal by simply calling ioctl() with the TIOCGWINSZ request. 
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+        return -1;
+    } else {
+        *cols = ws.ws_col;
+        *rows = ws.ws_row;
+        return 0;
+    }
+}
+
 /*** input ***/
 
 // waits for a keypress, and then handles it
@@ -172,7 +191,7 @@ void editorProcessKeypress() {
 
 void editorDrawRows() {
     int y;
-    for (y = 0; y < 24; y++) {
+    for (y = 0; y < E.screenRows; y++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
@@ -207,16 +226,24 @@ void editorRefreshScreen() {
         as if we had sent the <esc>[1;1H command. (Rows and columns are numbered starting at 1, not 0.)
     */
 
-    // 
+    // draw the beginning tilders
     editorDrawRows();
     write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /*** init ***/
 
+void initEditor() {
+    if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
+        die("getWindowSize");
+}
+
 int main() {
     // turn off echoing
     enableRawMode();
+
+    // init editor's rows/cols
+    initEditor();
 
     while (1) {
         editorRefreshScreen();
