@@ -7,6 +7,11 @@
 # include <stdio.h>
 # include <errno.h>
 
+/*** defines ***/
+
+// The CTRL_KEY macro bitwise-ANDs a character with the value 00011111, in binary.
+# define CTRL_KEY(k) ((k) & 0x1f)
+
 /*** data ***/
 
 struct termios original_termios;
@@ -145,7 +150,7 @@ int main() {
             printf("%d ('%c')\r\n", c, c);  // added carriage return \r because of OPOST turned off
         }
 
-        if (c == 'q')                       // break if 'q' is typed in
+        if (c == CTRL_KEY('q') || c == 'q') // break if 'q' is typed in
             break;
     }
     /* 
