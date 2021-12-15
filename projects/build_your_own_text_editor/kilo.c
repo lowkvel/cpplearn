@@ -16,6 +16,15 @@
 
 # define KILO_VERSION "0.0.1"
 
+enum editorKey {
+    ARROW_LEFT = 1000,
+    ARROR_RIGHT = 1001,
+    ARROR_UP = 1002,
+    ARROR_DOWN = 1003,
+    PAGE_UP = 1004,
+    PAGE_DOWN = 1005
+};
+
 /*** append buffer ***/
 
 struct abuf {
@@ -52,6 +61,7 @@ void abFree(struct abuf *ab) {
 
 /*** data ***/
 struct editorConfig {
+    int cursorX, cursorY;
     int screenRows;
     int screenCols;
     struct termios original_termios;
@@ -175,7 +185,7 @@ void enableRawMode() {
 }
 
 // wait for one keypress, and return it
-char editorReadKey() {
+int editorReadKey() {
     int nread;
     char c;
     while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
@@ -188,7 +198,39 @@ char editorReadKey() {
             To make it work in Cygwin, we won’t treat EAGAIN as an error.
         */
     }
-    return c;
+
+    if (c == '\x1b') {                              // an escape character is read
+        char seq[3];
+
+        if (read(STDIN_FILENO, &seq[0], 1) != 1)    // read 1 more
+            return '\x1b';
+        if (read(STDIN_FILENO, &seq[1], 1) != 1)    // read 1 more
+            return '\x1b';
+
+        if (seq[0] == '[') {
+            if (seq[1] >= '0' && seq[1] <= '9') {
+                if (read(STDIN_FILENO, &seq[2], 1) != 1)
+                    return '\x1b';
+                if (seq[2] == '~') {
+                    switch (seq[1]) {
+                        case '5': return PAGE_UP;
+                        case '6': return PAGE_DOWN;
+                    }
+                }
+            } else {
+                switch (seq[1]) {
+                    case 'A':   return ARROR_UP;        // up       -> w
+                    case 'B':   return ARROR_DOWN;      // down     -> s
+                    case 'C':   return ARROR_RIGHT;     // right    -> d
+                    case 'D':   return ARROW_LEFT;      // left     -> a
+                }
+            }
+        }
+
+        return '\x1b';
+    } else {
+        return c;
+    }
 }
 
 int getCursorPosition(int *rows, int *cols) {
@@ -243,9 +285,31 @@ int getWindowSize(int *rows, int *cols) {
 
 /*** input ***/
 
+// cursor move commands with asdf
+void editorMoveCursor(int key) {
+    switch (key) {
+        case ARROW_LEFT:
+            if (E.cursorX != 0)
+                E.cursorX--;
+            break;
+        case ARROR_RIGHT:
+            if (E.cursorX != E.screenCols - 1)
+                E.cursorX++;
+            break;
+        case ARROR_UP:
+            if (E.cursorY != 0)
+                E.cursorY--;
+            break;
+        case ARROR_DOWN:
+            if (E.cursorX != E.screenRows - 1)
+                E.cursorY++;
+            break;
+    }
+}
+
 // waits for a keypress, and then handles it
 void editorProcessKeypress() {
-    char c = editorReadKey();
+    int c = editorReadKey();
 
     switch (c) {
         case CTRL_KEY('q'):                         // exit if ctrl_q is typed in
@@ -257,6 +321,22 @@ void editorProcessKeypress() {
             write(STDOUT_FILENO, "\x1b[2J", 4);     // clear screen
             write(STDOUT_FILENO, "\x1b[H", 3);      // reposition the cursor
             exit(0);
+            break;
+
+        case PAGE_UP:
+        case PAGE_DOWN: 
+            {
+                int times = E.screenRows;
+                while (times--)
+                    editorMoveCursor(c == PAGE_UP ? ARROR_UP : ARROR_DOWN);
+            }
+            break;
+
+        case ARROR_UP:
+        case ARROR_DOWN:
+        case ARROW_LEFT:
+        case ARROR_RIGHT:
+            editorMoveCursor(c);
             break;
     }
 }
@@ -329,7 +409,10 @@ void editorRefreshScreen() {
 
     // draw the beginning tilders
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
-    abAppend(&ab, "\x1b[H", 3);             // string construction, reposition command
+
+    char buf[32];
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY + 1, E.cursorX + 1);  
+    abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
 
     // show cursor
     abAppend(&ab, "\x1b[?25h", 6);          // string construction, show cursor command
@@ -341,6 +424,9 @@ void editorRefreshScreen() {
 /*** init ***/
 
 void initEditor() {
+    E.cursorX = 0;
+    E.cursorY = 0;
+
     if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
         die("getWindowSize");
 }
@@ -351,6 +437,8 @@ int main() {
 
     // init editor's rows/cols
     initEditor();
+
+    //printf("%d %d", E.screenCols, E.screenRows);
 
     while (1) {
         editorRefreshScreen();
