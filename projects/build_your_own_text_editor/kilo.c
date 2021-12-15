@@ -199,7 +199,7 @@ int getCursorPosition(int *rows, int *cols) {
         return -1;
 
     while (i < sizeof(buf) - 1) {
-        if (read(STDOUT_FILENO, &buf[i], 1) != 1)
+        if (read(STDIN_FILENO, &buf[i], 1) != 1)
             break;
         if (buf[i] == 'R')
             break;
@@ -271,7 +271,7 @@ void editorDrawRows(struct abuf *ab) {
             int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
             if (welcomeLen > E.screenCols)
                 welcomeLen = E.screenCols;
-                
+
             int padding = (E.screenCols - welcomeLen) / 2;
             if (padding) {
                 abAppend(ab, "~", 1);
