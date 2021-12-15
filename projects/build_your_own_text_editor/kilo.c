@@ -266,6 +266,7 @@ void editorDrawRows(struct abuf *ab) {
     for (y = 0; y < E.screenRows; y++) {
         abAppend(ab, "~", 1);               // string construction, "~"
 
+        abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
         if (y < E.screenRows - 1) {
             abAppend(ab, "\r\n", 2);        // string construction, "\r\n"
         }
@@ -275,8 +276,11 @@ void editorDrawRows(struct abuf *ab) {
 void editorRefreshScreen() {
     struct abuf ab = ABUF_INIT;
 
+    // hide cursor
+    abAppend(&ab, "\x1b[?25l", 6);          // string construction, hide cursor command
+
     // clear screen
-    abAppend(&ab, "\x1b[2J", 4);            // string construction, clear command
+    //abAppend(&ab, "\x1b[2J", 4);            // string construction, clear command
     /*
         The 4 in our write() call means we are writing 4 bytes out to the terminal. 
         The first byte is \x1b, which is the escape character, or 27 in decimal. 
@@ -307,6 +311,9 @@ void editorRefreshScreen() {
     // draw the beginning tilders
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
     abAppend(&ab, "\x1b[H", 3);             // string construction, reposition command
+
+    // show cursor
+    abAppend(&ab, "\x1b[?25h", 6);          // string construction, show cursor command
 
     write(STDOUT_FILENO, ab.b, ab.len);     // actual writes to output
     abFree(&ab);                            // free memory
