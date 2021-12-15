@@ -7,11 +7,46 @@
 # include <stdio.h>
 # include <errno.h>
 # include <sys/ioctl.h>
+# include <string.h>
 
 /*** defines ***/
 
 // The CTRL_KEY macro bitwise-ANDs a character with the value 00011111, in binary.
 # define CTRL_KEY(k) ((k) & 0x1f)
+
+/*** append buffer ***/
+
+struct abuf {
+    char *b;    // pointer to memory of string
+    int len;    // length of current string in abuf
+};
+
+# define ABUF_INIT {NULL, 0}
+
+// realloc
+void abAppend(struct abuf *ab, const char *s, int len) {
+    // realloc() with a block of memory that is the size of (the current string + the string we are appending)
+    char *new = realloc(ab->b, ab->len + len);  // re-allocate a memory space
+    /*
+        We ask realloc() to give us a block of memory 
+        that is the size of the current string plus the size of the string we are appending. 
+        
+        realloc() will either extend the size of the block of memory we already have allocated, 
+        or it will take care of free()ing the current block of memory 
+        and allocating a new block of memory somewhere else that is big enough for our new string.
+    */
+
+    if (new == NULL)
+        return;
+    memcpy(&new[ab->len], s, len);              // copy current string into new memory location
+    ab->b = new;
+    ab->len += len;
+}
+
+// free
+void abFree(struct abuf *ab) {
+    free(ab->b);                                // free memory
+}
 
 /*** data ***/
 struct editorConfig {
@@ -226,20 +261,22 @@ void editorProcessKeypress() {
 
 /*** output ***/
 
-void editorDrawRows() {
+void editorDrawRows(struct abuf *ab) {
     int y;
     for (y = 0; y < E.screenRows; y++) {
-        write(STDOUT_FILENO, "~", 1);
+        abAppend(ab, "~", 1);               // string construction, "~"
 
         if (y < E.screenRows - 1) {
-            write(STDOUT_FILENO, "\r\n", 2);
+            abAppend(ab, "\r\n", 2);        // string construction, "\r\n"
         }
     }
 }
 
 void editorRefreshScreen() {
+    struct abuf ab = ABUF_INIT;
+
     // clear screen
-    write(STDOUT_FILENO, "\x1b[2J", 4);
+    abAppend(&ab, "\x1b[2J", 4);            // string construction, clear command
     /*
         The 4 in our write() call means we are writing 4 bytes out to the terminal. 
         The first byte is \x1b, which is the escape character, or 27 in decimal. 
@@ -255,7 +292,7 @@ void editorRefreshScreen() {
     */
 
     // reposition the cursor
-    write(STDOUT_FILENO, "\x1b[H", 3);
+    abAppend(&ab, "\x1b[H", 3);             // string construction, reposition command
     /*
         This escape sequence is only 3 bytes long, and uses the H command (Cursor Position) to position the cursor. 
         The H command actually takes two arguments: 
@@ -268,8 +305,11 @@ void editorRefreshScreen() {
     */
 
     // draw the beginning tilders
-    editorDrawRows();
-    write(STDOUT_FILENO, "\x1b[H", 3);
+    editorDrawRows(&ab);                    // string construction, "~\r\n" 
+    abAppend(&ab, "\x1b[H", 3);             // string construction, reposition command
+
+    write(STDOUT_FILENO, ab.b, ab.len);     // actual writes to output
+    abFree(&ab);                            // free memory
 }
 
 /*** init ***/
