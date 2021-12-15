@@ -154,12 +154,49 @@ char editorReadKey() {
     return c;
 }
 
+int getCursorPosition(int *rows, int *cols) {
+    char buf[32];
+    unsigned int i = 0;
+
+    if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4)
+        return -1;
+
+    while (i < sizeof(buf) - 1) {
+        if (read(STDOUT_FILENO, &buf[i], 1) != 1)
+            break;
+        if (buf[i] == 'R')
+            break;
+        i++;
+    }
+    buf[i] = '\0';
+    
+    if (buf[0] != '\x1b' || buf[1] != '[')
+        return -1;
+    if (sscanf(&buf[2], "%d;%d", rows, cols) != 2)
+        return -1;
+
+    return 0;
+}
+
 int getWindowSize(int *rows, int *cols) {
     struct winsize ws;
 
     // get the size of the terminal by simply calling ioctl() with the TIOCGWINSZ request. 
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
-        return -1;
+        if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12)
+            return -1;
+        /*
+            We are sending two escape sequences one after the other. 
+            The C command (Cursor Forward) moves the cursor to the right, 
+            and the B command (Cursor Down) moves the cursor down. 
+            The argument says how much to move it right or down by. 
+            We use a very large value, 999, 
+            which should ensure that the cursor reaches the right and bottom edges of the screen.
+
+            The C and B commands are specifically documented to stop the cursor from going past the edge of the screen. 
+        */
+
+        return getCursorPosition(rows, cols);
     } else {
         *cols = ws.ws_col;
         *rows = ws.ws_row;
@@ -192,7 +229,11 @@ void editorProcessKeypress() {
 void editorDrawRows() {
     int y;
     for (y = 0; y < E.screenRows; y++) {
-        write(STDOUT_FILENO, "~\r\n", 3);
+        write(STDOUT_FILENO, "~", 1);
+
+        if (y < E.screenRows - 1) {
+            write(STDOUT_FILENO, "\r\n", 2);
+        }
     }
 }
 
