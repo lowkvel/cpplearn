@@ -14,6 +14,8 @@
 // The CTRL_KEY macro bitwise-ANDs a character with the value 00011111, in binary.
 # define CTRL_KEY(k) ((k) & 0x1f)
 
+# define KILO_VERSION "0.0.1"
+
 /*** append buffer ***/
 
 struct abuf {
@@ -264,7 +266,24 @@ void editorProcessKeypress() {
 void editorDrawRows(struct abuf *ab) {
     int y;
     for (y = 0; y < E.screenRows; y++) {
-        abAppend(ab, "~", 1);               // string construction, "~"
+        if (y == E.screenCols / 3) {
+            char welcome[80];
+            int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
+            if (welcomeLen > E.screenCols)
+                welcomeLen = E.screenCols;
+                
+            int padding = (E.screenCols - welcomeLen) / 2;
+            if (padding) {
+                abAppend(ab, "~", 1);
+                padding--;
+            }
+            while (padding--)
+                abAppend(ab, " ", 1);
+
+            abAppend(ab, welcome, welcomeLen);
+        } else {
+            abAppend(ab, "~", 1);           // string construction, "~"
+        }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
         if (y < E.screenRows - 1) {
