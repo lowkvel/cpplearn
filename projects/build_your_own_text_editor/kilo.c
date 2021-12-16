@@ -18,14 +18,14 @@
 
 enum editorKey {
     ARROW_LEFT = 1000,
-    ARROR_RIGHT = 1001,
-    ARROR_UP = 1002,
-    ARROR_DOWN = 1003,
-    PAGE_UP = 1004,
-    PAGE_DOWN = 1005,
-    HOME_KEY = 1006,
-    END_KEY = 1007,
-    DEL_KEY = 1008,
+    ARROR_RIGHT,
+    ARROR_UP,
+    ARROR_DOWN,
+    HOME_KEY,
+    DEL_KEY, 
+    END_KEY,
+    PAGE_UP,
+    PAGE_DOWN,
 };
 
 /*** append buffer ***/
@@ -102,7 +102,7 @@ void disableRawMode() {
 // turn off echoing
 void enableRawMode() {
     // get a terminal’s attributes into original_termios for backup
-    if (tcgetattr(STDERR_FILENO, &E.original_termios) == -1)
+    if (tcgetattr(STDIN_FILENO, &E.original_termios) == -1)
         die("tcgetattr");
 
     // disable raw mode at exit using atexit() from <stdlib.h>
@@ -368,7 +368,7 @@ void editorProcessKeypress() {
 void editorDrawRows(struct abuf *ab) {
     int y;
     for (y = 0; y < E.screenRows; y++) {
-        if (y == E.screenCols / 3) {
+        if (y == E.screenRows / 3) {
             char welcome[80];
             int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
             if (welcomeLen > E.screenCols)
