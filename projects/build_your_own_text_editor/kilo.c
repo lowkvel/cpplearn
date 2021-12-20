@@ -23,6 +23,7 @@
 # define CTRL_KEY(k) ((k) & 0x1f)
 
 # define KILO_VERSION "0.0.1"
+# define KILO_TAB_STOP 8
 
 enum editorKey {
     ARROW_LEFT = 1000,
@@ -75,7 +76,10 @@ void abFree(struct abuf *ab) {
 // editor row
 typedef struct erow {
     int size;
-    char *chars;
+    char *chars;    // normal string 
+
+    int renderSize;
+    char *render;   // render string, contains special sequences, including tabs, ^, etc, and normal string *chars
 } erow;
 
 // editor config
@@ -320,6 +324,29 @@ int getWindowSize(int *rows, int *cols) {
 
 /*** row operations ***/
 
+// uses the chars string of an erow to fill in the contents of the render string.
+void editorUpdateRow(erow *row) {
+    int tabsCount = 0;
+    int charsIndex; 
+    for (charsIndex = 0; charsIndex < row->size; charsIndex++)      // count all tabs for memory allocation
+        if (row->chars[charsIndex] == '\t')
+            tabsCount++;
+    free(row->render);
+    row->render = malloc(row->size + tabsCount * (KILO_TAB_STOP - 1) + 1);      // memory allocation
+
+    int renderIndex = 0;
+    for (charsIndex = 0; charsIndex < row->size; charsIndex++)
+        if (row->chars[charsIndex] == '\t') {                       // replace '\t' in chars with ' '*8 in render
+            row->render[renderIndex++] = ' ';
+            while (renderIndex % KILO_TAB_STOP != 0)
+                row->render[renderIndex++] = ' ';
+        } else 
+            row->render[renderIndex++] = row->chars[charsIndex];    // copy chars to render
+
+    row->render[renderIndex] = '\0';
+    row->renderSize = renderIndex;
+}
+
 void editorAppendRow(char *s, size_t len) {
     E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));     // find E.row a new area or expand current memory storage
 
@@ -328,6 +355,11 @@ void editorAppendRow(char *s, size_t len) {
     E.row[index].chars = malloc(len + 1);
     memcpy(E.row[index].chars, s, len);
     E.row[index].chars[len] = '\0';
+
+    E.row[index].renderSize = 0;
+    E.row[index].render = NULL;
+    editorUpdateRow(&E.row[index]);
+
     E.numrows++;
 }
 
@@ -484,12 +516,12 @@ void editorDrawRows(struct abuf *ab) {
                 abAppend(ab, "~", 1);           // string construction, "~"
             }
         } else {                                // or a row that comes after the end of the text buffer.
-            int len = E.row[filerow].size - E.colOffset;
+            int len = E.row[filerow].renderSize - E.colOffset;
             if (len < 0)
                 len = 0;
             if (len > E.screenCols)             // truncate the rendered line if it go past the end of the screen.
                 len = E.screenCols;
-            abAppend(ab, &E.row[filerow].chars[E.colOffset], len);
+            abAppend(ab, &E.row[filerow].render[E.colOffset], len);
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
