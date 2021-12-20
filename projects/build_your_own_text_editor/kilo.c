@@ -467,12 +467,20 @@ void editorProcessKeypress() {
             E.cursorX = 0;
             break;
         case END_KEY:
-            E.cursorX = E.screenCols - 1;
+            if (E.cursorY < E.numrows)
+                E.cursorX = E.row[E.cursorY].size;
             break;
 
         case PAGE_UP:
         case PAGE_DOWN: 
             {
+                if (c == PAGE_UP)
+                    E.cursorY = E.rowOffset;
+                else if (c == PAGE_DOWN) {
+                    E.cursorY = E.rowOffset + E.screenRows - 1;
+                    if (E.cursorY > E.numrows)
+                        E.cursorY = E.numrows;
+                }
                 int times = E.screenRows;
                 while (times--)
                     editorMoveCursor(c == PAGE_UP ? ARROR_UP : ARROR_DOWN);
