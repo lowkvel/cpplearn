@@ -82,7 +82,7 @@ struct editorConfig {
     int screenRows;
     int screenCols;
     int numrows;
-    erow row;
+    erow *row;      // dynamically-allocated array of erow struct which contains each row's size and *chars
     struct termios original_termios;
 };
 
@@ -314,6 +314,19 @@ int getWindowSize(int *rows, int *cols) {
     }
 }
 
+/*** row operations ***/
+
+void editorAppendRow(char *s, size_t len) {
+    E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));     // find E.row a new area or expand current memory storage
+
+    int index = E.numrows;
+    E.row[index].size = len;
+    E.row[index].chars = malloc(len + 1);
+    memcpy(E.row[index].chars, s, len);
+    E.row[index].chars[len] = '\0';
+    E.numrows++;
+}
+
 /*** file i/o ***/
 
 void editorOpen(char *filename) {
@@ -324,27 +337,22 @@ void editorOpen(char *filename) {
     char *line = NULL;
     size_t linecap = 0;
     ssize_t linelength;
-    linelength = getline(&line, &linecap, fp);
-    /*
-        getline() is useful for reading lines from a file when we don’t know how much memory to allocate for each line. 
-        It takes care of memory management for you. 
-        First, we pass it a null line pointer and a linecap (line capacity) of 0. 
-            That makes it allocate new memory for the next line it reads, 
-            and set line to point to the memory, 
-            and set linecap to let you know how much memory it allocated. 
-        Its return value is the length of the line it read, or -1 if it’s at the end of the file and there are no more lines to read.
-    */
-    if (linelength != -1) {
-        while (linelength > 0 && 
-              (line[linelength - 1] == '\n' ||  // strip off the newline or carriage return at the end of the line 
-               line[linelength - 1] == '\r'))   
+    while ((linelength = getline(&line, &linecap, fp)) != -1) {
+        /*
+            getline() is useful for reading lines from a file when we don’t know how much memory to allocate for each line. 
+            It takes care of memory management for you. 
+            First, we pass it a null line pointer and a linecap (line capacity) of 0. 
+                That makes it allocate new memory for the next line it reads, 
+                and set line to point to the memory, 
+                and set linecap to let you know how much memory it allocated. 
+            Its return value is the length of the line it read, or -1 if it’s at the end of the file and there are no more lines to read.
+        */
+       
+        // strip off the newline or carriage return at the end of the line 
+        while (linelength > 0 && (line[linelength - 1] == '\n' || line[linelength - 1] == '\r'))   
             linelength--;
 
-        E.row.size = linelength;
-        E.row.chars = malloc(linelength + 1);
-        memcpy(E.row.chars, line, linelength);
-        E.row.chars[linelength] = '\0';
-        E.numrows = 1;
+        editorAppendRow(line, linelength);
     }
 
     free(line);
@@ -419,10 +427,10 @@ void editorProcessKeypress() {
 /*** output ***/
 
 void editorDrawRows(struct abuf *ab) {
-    int y;
-    for (y = 0; y < E.screenRows; y++) {
-        if (y >= E.numrows) {                   // checks whether we are currently drawing a row that is part of the text buffer
-            if (E.numrows == 0 && y == E.screenRows / 3) {
+    int rowy;
+    for (rowy = 0; rowy < E.screenRows; rowy++) {
+        if (rowy >= E.numrows) {                   // checks whether we are currently drawing a row that is part of the text buffer
+            if (E.numrows == 0 && rowy == E.screenRows / 3) {
                 char welcome[80];
                 int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
                 if (welcomeLen > E.screenCols)
@@ -441,14 +449,14 @@ void editorDrawRows(struct abuf *ab) {
                 abAppend(ab, "~", 1);           // string construction, "~"
             }
         } else {                                // or a row that comes after the end of the text buffer.
-            int len = E.row.size;
+            int len = E.row[rowy].size;
             if (len > E.screenCols)             // truncate the rendered line if it go past the end of the screen.
                 len = E.screenCols;
-            abAppend(ab, E.row.chars, len);
+            abAppend(ab, E.row[rowy].chars, len);
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
-        if (y < E.screenRows - 1) {
+        if (rowy < E.screenRows - 1) {
             abAppend(ab, "\r\n", 2);        // string construction, "\r\n"
         }
     }
@@ -509,6 +517,7 @@ void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
     E.numrows = 0;
+    E.row = NULL;
 
     if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
         die("getWindowSize");
