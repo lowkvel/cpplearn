@@ -84,7 +84,8 @@ typedef struct erow {
 
 // editor config
 struct editorConfig {
-    int cursorX, cursorY;
+    int cursorX, cursorY;   // cursor X&Y
+    int renderX;            // render X
     int rowOffset;          // keep track of what row of the file the user is currently scrolled to.
     int colOffset;          // keep track of what col of the file the user is currently scrolled to.
     int screenRows;
@@ -324,6 +325,18 @@ int getWindowSize(int *rows, int *cols) {
 
 /*** row operations ***/
 
+// converts cursorX to renderX
+int editorRowCxToRx(erow *row, int cx) {
+    int rx = 0;
+    int j;
+    for (j = 0; j < cx; j++) {
+        if (row->chars[j] == '\t')
+            rx += (KILO_TAB_STOP - 1) - (rx % KILO_TAB_STOP);
+        rx++;
+    }
+    return rx;
+}
+
 // uses the chars string of an erow to fill in the contents of the render string.
 void editorUpdateRow(erow *row) {
     int tabsCount = 0;
@@ -478,6 +491,10 @@ void editorProcessKeypress() {
 /*** output ***/
 
 void editorScroll() {
+    E.renderX = 0;
+    if (E.cursorY < E.numrows)
+        E.renderX = editorRowCxToRx(&E.row[E.cursorY], E.cursorX);
+    
     // checks if the cursor is above the visible window
     if (E.cursorY < E.rowOffset)
         E.rowOffset = E.cursorY;
@@ -485,11 +502,11 @@ void editorScroll() {
     if (E.cursorY >= E.rowOffset + E.screenRows)
         E.rowOffset = E.cursorY - E.screenRows + 1;
     // checks if the cursor is past the left of the visible window
-    if (E.cursorX < E.colOffset)
-        E.colOffset = E.cursorX;
+    if (E.renderX < E.colOffset)
+        E.colOffset = E.renderX;
     // checks if the cursor is past the right of the visible window
-    if (E.cursorX >= E.colOffset + E.screenCols)
-        E.colOffset = E.cursorX - E.screenCols + 1;
+    if (E.renderX >= E.colOffset + E.screenCols)
+        E.colOffset = E.renderX - E.screenCols + 1;
 }
 
 void editorDrawRows(struct abuf *ab) {
@@ -572,7 +589,7 @@ void editorRefreshScreen() {
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
 
     char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.cursorX - E.colOffset + 1);  
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.renderX - E.colOffset + 1);  
     abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
 
     // show cursor
@@ -587,6 +604,7 @@ void editorRefreshScreen() {
 void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
+    E.renderX = 0;
     E.rowOffset = 0;    // default scrolled to the top of the file
     E.colOffset = 0;
     E.numrows = 0;
