@@ -79,10 +79,11 @@ typedef struct erow {
 // editor config
 struct editorConfig {
     int cursorX, cursorY;
+    int rowOffset;          // keep track of what row of the file the user is currently scrolled to.
     int screenRows;
     int screenCols;
     int numrows;
-    erow *row;      // dynamically-allocated array of erow struct which contains each row's size and *chars
+    erow *row;              // dynamically-allocated array of erow struct which contains each row's size and *chars
     struct termios original_termios;
 };
 
@@ -377,7 +378,7 @@ void editorMoveCursor(int key) {
                 E.cursorY--;
             break;
         case ARROR_DOWN:
-            if (E.cursorX != E.screenRows - 1)
+            if (E.cursorY < E.numrows)
                 E.cursorY++;
             break;
     }
@@ -426,10 +427,20 @@ void editorProcessKeypress() {
 
 /*** output ***/
 
+void editorScroll() {
+    // checks if the cursor is above the visible window
+    if (E.cursorY < E.rowOffset)
+        E.rowOffset = E.cursorY;
+    // checks if the cursor is past the bottom of the visible window
+    if (E.cursorY >= E.rowOffset + E.screenRows)
+        E.rowOffset = E.cursorY - E.screenRows + 1;
+}
+
 void editorDrawRows(struct abuf *ab) {
     int rowy;
     for (rowy = 0; rowy < E.screenRows; rowy++) {
-        if (rowy >= E.numrows) {                   // checks whether we are currently drawing a row that is part of the text buffer
+        int filerow = rowy + E.rowOffset;
+        if (filerow >= E.numrows) {              // checks whether we are currently drawing a row that is part of the text buffer
             if (E.numrows == 0 && rowy == E.screenRows / 3) {
                 char welcome[80];
                 int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
@@ -449,10 +460,10 @@ void editorDrawRows(struct abuf *ab) {
                 abAppend(ab, "~", 1);           // string construction, "~"
             }
         } else {                                // or a row that comes after the end of the text buffer.
-            int len = E.row[rowy].size;
+            int len = E.row[filerow].size;
             if (len > E.screenCols)             // truncate the rendered line if it go past the end of the screen.
                 len = E.screenCols;
-            abAppend(ab, E.row[rowy].chars, len);
+            abAppend(ab, E.row[filerow].chars, len);
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
@@ -463,6 +474,8 @@ void editorDrawRows(struct abuf *ab) {
 }
 
 void editorRefreshScreen() {
+    editorScroll();
+
     struct abuf ab = ABUF_INIT;
 
     // hide cursor
@@ -501,7 +514,7 @@ void editorRefreshScreen() {
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
 
     char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY + 1, E.cursorX + 1);  
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.cursorX + 1);  
     abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
 
     // show cursor
@@ -516,6 +529,7 @@ void editorRefreshScreen() {
 void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
+    E.rowOffset = 0;    // default scrolled to the top of the file
     E.numrows = 0;
     E.row = NULL;
 
