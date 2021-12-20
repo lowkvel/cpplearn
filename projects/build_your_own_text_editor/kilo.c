@@ -7,6 +7,7 @@
 # include <stdio.h>
 # include <errno.h>
 # include <sys/ioctl.h>
+# include <sys/types.h>
 # include <string.h>
 
 /*** defines ***/
@@ -63,10 +64,20 @@ void abFree(struct abuf *ab) {
 }
 
 /*** data ***/
+
+// editor row
+typedef struct erow {
+    int size;
+    char *chars;
+} erow;
+
+// editor config
 struct editorConfig {
     int cursorX, cursorY;
     int screenRows;
     int screenCols;
+    int numrows;
+    erow row;
     struct termios original_termios;
 };
 
@@ -298,6 +309,19 @@ int getWindowSize(int *rows, int *cols) {
     }
 }
 
+/*** file i/o ***/
+
+void editorOpen(char *filename) {
+    char *line = "Hello, world!";
+    ssize_t linelength = 13;
+
+    E.row.size = linelength;
+    E.row.chars = malloc(linelength + 1);
+    memccpy(E.row.chars, line, linelength);
+    E.row.chars[linelength] = '\0';
+    E.numrows = 1;
+}
+
 /*** input ***/
 
 // cursor move commands with asdf
@@ -368,23 +392,30 @@ void editorProcessKeypress() {
 void editorDrawRows(struct abuf *ab) {
     int y;
     for (y = 0; y < E.screenRows; y++) {
-        if (y == E.screenRows / 3) {
-            char welcome[80];
-            int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
-            if (welcomeLen > E.screenCols)
-                welcomeLen = E.screenCols;
+        if (y >= E.numrows) {                   // checks whether we are currently drawing a row that is part of the text buffer
+            if (y == E.screenRows / 3) {
+                char welcome[80];
+                int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
+                if (welcomeLen > E.screenCols)
+                    welcomeLen = E.screenCols;
 
-            int padding = (E.screenCols - welcomeLen) / 2;
-            if (padding) {
-                abAppend(ab, "~", 1);
-                padding--;
+                int padding = (E.screenCols - welcomeLen) / 2;
+                if (padding) {
+                    abAppend(ab, "~", 1);
+                    padding--;
+                }
+                while (padding--)
+                    abAppend(ab, " ", 1);
+
+                abAppend(ab, welcome, welcomeLen);
+            } else {
+                abAppend(ab, "~", 1);           // string construction, "~"
             }
-            while (padding--)
-                abAppend(ab, " ", 1);
-
-            abAppend(ab, welcome, welcomeLen);
-        } else {
-            abAppend(ab, "~", 1);           // string construction, "~"
+        } else {                                // or a row that comes after the end of the text buffer.
+            int len = E.row.size;
+            if (len > E.screenCols)             // truncate the rendered line if it go past the end of the screen.
+                len = E.screenCols;
+            abAppend(ab, E.row.chars, len);
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
@@ -448,6 +479,7 @@ void editorRefreshScreen() {
 void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
+    E.numrows = 0;
 
     if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
         die("getWindowSize");
@@ -459,6 +491,9 @@ int main() {
 
     // init editor's rows/cols
     initEditor();
+
+    // file i/o for opening and reading a file from disk
+    editorOpen();
 
     //printf("%d %d", E.screenCols, E.screenRows);
 
