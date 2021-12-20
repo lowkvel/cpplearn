@@ -91,6 +91,7 @@ struct editorConfig {
     int screenRows;
     int screenCols;
     int numrows;
+    char *filename;
     erow *row;              // dynamically-allocated array of erow struct which contains each row's size and *chars
     struct termios original_termios;
 };
@@ -379,6 +380,9 @@ void editorAppendRow(char *s, size_t len) {
 /*** file i/o ***/
 
 void editorOpen(char *filename) {
+    free(E.filename);
+    E.filename = strdup(filename);      // makes a copy of the given string, allocating the required memory
+
     FILE *fp = fopen(filename, "r");
     if (!fp)
         die("fopen");
@@ -550,10 +554,38 @@ void editorDrawRows(struct abuf *ab) {
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
-        if (rowy < E.screenRows - 1) {
-            abAppend(ab, "\r\n", 2);        // string construction, "\r\n"
+        abAppend(ab, "\r\n", 2);            // string construction, "\r\n"
+    }
+}
+
+// draw status bar at bottom
+void editorDrawStatusBar(struct abuf *ab) {
+    abAppend(ab, "\x1b[7m", 4);     // <esc>[7m switches to inverted colors
+
+    char status[80];                // up to 20 chars will be displayed on the left
+    int len = snprintf(status, sizeof(status), "%.20s - %d lines", E.filename ? E.filename : "[No Name", E.numrows);
+    char rstatus[80];               // up to 20 chars will be displayed on the right
+    int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d", E.cursorY + 1, E.numrows);
+    if (len > E.screenCols)         // 20 limits cut
+        len = E.screenCols;
+    abAppend(ab, status, len);
+
+    while (len < E.screenCols) {
+        if (E.screenCols - len == rlen) {
+            abAppend(ab, rstatus, rlen);
+            break;
+        } else {
+            abAppend(ab, " ", 1);
+            len++;
         }
     }
+    abAppend(ab, "\x1b[m", 3);      // <esc>[m switches back to normal formatting.
+    /*
+        The m command (Select Graphic Rendition) causes the text printed after it to be printed with various possible attributes 
+            including bold (1), underscore (4), blink (5), and inverted colors (7). 
+        For example, you could specify all of these attributes using the command <esc>[1;4;5;7m. 
+        An argument of 0 clears all attributes, and is the default argument, so we use <esc>[m to go back to normal text formatting.
+    */
 }
 
 void editorRefreshScreen() {
@@ -596,6 +628,9 @@ void editorRefreshScreen() {
     // draw the beginning tilders
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
 
+    // draw status bar
+    editorDrawStatusBar(&ab);               // status bar 
+
     char buf[32];
     snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.renderX - E.colOffset + 1);  
     abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
@@ -617,9 +652,11 @@ void initEditor() {
     E.colOffset = 0;
     E.numrows = 0;
     E.row = NULL;
+    E.filename = NULL;
 
     if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
         die("getWindowSize");
+    E.screenRows -= 1;
 }
 
 int main(int argc, char *argv[]) {
