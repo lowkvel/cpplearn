@@ -1,5 +1,7 @@
 /*** includes ***/
 
+// test line Note that when subtracting E.coloff from the length, len can now be a negative number, meaning the user scrolled horizontally past the end of the line. In that case, we set len to 0 so that nothing is displayed on that line.
+
 // feature test macro, https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html 
 # define _DEFAULT_SOURCE
 # define _BSD_SOURCE
@@ -80,6 +82,7 @@ typedef struct erow {
 struct editorConfig {
     int cursorX, cursorY;
     int rowOffset;          // keep track of what row of the file the user is currently scrolled to.
+    int colOffset;          // keep track of what col of the file the user is currently scrolled to.
     int screenRows;
     int screenCols;
     int numrows;
@@ -370,8 +373,7 @@ void editorMoveCursor(int key) {
                 E.cursorX--;
             break;
         case ARROR_RIGHT:
-            if (E.cursorX != E.screenCols - 1)
-                E.cursorX++;
+            E.cursorX++;
             break;
         case ARROR_UP:
             if (E.cursorY != 0)
@@ -434,6 +436,12 @@ void editorScroll() {
     // checks if the cursor is past the bottom of the visible window
     if (E.cursorY >= E.rowOffset + E.screenRows)
         E.rowOffset = E.cursorY - E.screenRows + 1;
+    // checks if the cursor is past the left of the visible window
+    if (E.cursorX < E.colOffset)
+        E.colOffset = E.cursorX;
+    // checks if the cursor is past the right of the visible window
+    if (E.cursorX >= E.colOffset + E.screenCols)
+        E.colOffset = E.cursorX - E.screenCols + 1;
 }
 
 void editorDrawRows(struct abuf *ab) {
@@ -460,10 +468,12 @@ void editorDrawRows(struct abuf *ab) {
                 abAppend(ab, "~", 1);           // string construction, "~"
             }
         } else {                                // or a row that comes after the end of the text buffer.
-            int len = E.row[filerow].size;
+            int len = E.row[filerow].size - E.colOffset;
+            if (len < 0)
+                len = 0;
             if (len > E.screenCols)             // truncate the rendered line if it go past the end of the screen.
                 len = E.screenCols;
-            abAppend(ab, E.row[filerow].chars, len);
+            abAppend(ab, &E.row[filerow].chars[E.colOffset], len);
         }
 
         abAppend(ab, "\x1b[K", 3);          // string construction, clear row command
@@ -514,7 +524,7 @@ void editorRefreshScreen() {
     editorDrawRows(&ab);                    // string construction, "~\r\n" 
 
     char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.cursorX + 1);  
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.cursorX - E.colOffset + 1);  
     abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
 
     // show cursor
@@ -530,6 +540,7 @@ void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
     E.rowOffset = 0;    // default scrolled to the top of the file
+    E.colOffset = 0;
     E.numrows = 0;
     E.row = NULL;
 
