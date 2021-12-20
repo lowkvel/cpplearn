@@ -371,20 +371,28 @@ void editorMoveCursor(int key) {
 
     switch (key) {
         case ARROW_LEFT:
-            if (E.cursorX != 0)
+            if (E.cursorX != 0)                     // cursorX > 0
                 E.cursorX--;
+            else if (E.cursorY > 0) {               // move to end of above line if it exist
+                E.cursorY--;                        // move above line
+                E.cursorX = E.row[E.cursorY].size;  // move to the end of above line
+            }
             break;
         case ARROR_RIGHT:
-            if (row && E.cursorX < row->size)
-                E.cursorX++;
+            if (row && E.cursorX < row->size)           // row exist && still right to move
+                E.cursorX++;                            
+            else if (row && E.cursorX == row->size) {   // move to the start of next line if it exist
+                E.cursorY++;                            // move next line
+                E.cursorX = 0;                          // move to the start of next line
+            }
             break;
         case ARROR_UP:
-            if (E.cursorY != 0)
-                E.cursorY--;
+            if (E.cursorY != 0)                     // cursorY > 0
+                E.cursorY--;                        // move up
             break;
         case ARROR_DOWN:
-            if (E.cursorY < E.numrows)
-                E.cursorY++;
+            if (E.cursorY < E.numrows)              // cursorY < number of rows
+                E.cursorY++;                        // move down
             break;
     }
 
