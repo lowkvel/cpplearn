@@ -1,5 +1,10 @@
 /*** includes ***/
 
+// feature test macro, https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html 
+# define _DEFAULT_SOURCE
+# define _BSD_SOURCE
+# define _GNU_SOURCE
+
 # include <unistd.h>
 # include <termios.h>
 # include <stdlib.h>
@@ -312,14 +317,38 @@ int getWindowSize(int *rows, int *cols) {
 /*** file i/o ***/
 
 void editorOpen(char *filename) {
-    char *line = "Hello, world!";
-    ssize_t linelength = 13;
+    FILE *fp = fopen(filename, "r");
+    if (!fp)
+        die("fopen");
 
-    E.row.size = linelength;
-    E.row.chars = malloc(linelength + 1);
-    memccpy(E.row.chars, line, linelength);
-    E.row.chars[linelength] = '\0';
-    E.numrows = 1;
+    char *line = NULL;
+    size_t linecap = 0;
+    ssize_t linelength;
+    linelength = getline(&line, &linecap, fp);
+    /*
+        getline() is useful for reading lines from a file when we don’t know how much memory to allocate for each line. 
+        It takes care of memory management for you. 
+        First, we pass it a null line pointer and a linecap (line capacity) of 0. 
+            That makes it allocate new memory for the next line it reads, 
+            and set line to point to the memory, 
+            and set linecap to let you know how much memory it allocated. 
+        Its return value is the length of the line it read, or -1 if it’s at the end of the file and there are no more lines to read.
+    */
+    if (linelength != -1) {
+        while (linelength > 0 && 
+              (line[linelength - 1] == '\n' ||  // strip off the newline or carriage return at the end of the line 
+               line[linelength - 1] == '\r'))   
+            linelength--;
+
+        E.row.size = linelength;
+        E.row.chars = malloc(linelength + 1);
+        memcpy(E.row.chars, line, linelength);
+        E.row.chars[linelength] = '\0';
+        E.numrows = 1;
+    }
+
+    free(line);
+    fclose(fp);
 }
 
 /*** input ***/
@@ -393,7 +422,7 @@ void editorDrawRows(struct abuf *ab) {
     int y;
     for (y = 0; y < E.screenRows; y++) {
         if (y >= E.numrows) {                   // checks whether we are currently drawing a row that is part of the text buffer
-            if (y == E.screenRows / 3) {
+            if (E.numrows == 0 && y == E.screenRows / 3) {
                 char welcome[80];
                 int welcomeLen = snprintf(welcome, sizeof(welcome), "Kilo editor -- version %s", KILO_VERSION);
                 if (welcomeLen > E.screenCols)
@@ -485,7 +514,7 @@ void initEditor() {
         die("getWindowSize");
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     // turn off echoing
     enableRawMode();
 
@@ -493,7 +522,8 @@ int main() {
     initEditor();
 
     // file i/o for opening and reading a file from disk
-    editorOpen();
+    if (argc >= 2)
+        editorOpen(argv[1]);
 
     //printf("%d %d", E.screenCols, E.screenRows);
 
