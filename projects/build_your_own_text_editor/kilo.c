@@ -367,13 +367,16 @@ void editorOpen(char *filename) {
 
 // cursor move commands with asdf
 void editorMoveCursor(int key) {
+    erow *row = (E.cursorY >= E.numrows) ? NULL : &E.row[E.cursorY];
+
     switch (key) {
         case ARROW_LEFT:
             if (E.cursorX != 0)
                 E.cursorX--;
             break;
         case ARROR_RIGHT:
-            E.cursorX++;
+            if (row && E.cursorX < row->size)
+                E.cursorX++;
             break;
         case ARROR_UP:
             if (E.cursorY != 0)
@@ -384,6 +387,11 @@ void editorMoveCursor(int key) {
                 E.cursorY++;
             break;
     }
+
+    row = (E.cursorY >= E.numrows) ? NULL : &E.row[E.cursorY];  // row exists
+    int rowlen = row ? row->size : 0;                           // get length of current row
+    if (E.cursorX > rowlen)                                     // correct cursorX to row len to prevent moving cursor down after moving cursor right on a really long line
+        E.cursorX = rowlen;
 }
 
 // waits for a keypress, and then handles it
