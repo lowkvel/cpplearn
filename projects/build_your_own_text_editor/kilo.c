@@ -381,6 +381,28 @@ void editorAppendRow(char *s, size_t len) {
     E.numrows++;
 }
 
+// row operations for insert char, row-wise memory allocation and actual char inserting at designated position
+void editorRowInsertChar(erow *row, int at, int c) {
+    if (at < 0 || at > row->size)                                       // validate position boundary
+        at = row->size;
+    row->chars = realloc(row->chars, row->size + 2);                    // 2 char memory added, 1 for char, 1 for null (not included in row->size)
+    memmove(&row->chars[at + 1], &row->chars[at], row->size - at + 1);  // make room for new character
+    row->size++;                                                        // the size doesnt include the null at tail, thus +1 only
+    row->chars[at] = c;                                                 // insert it at desinated position
+    editorUpdateRow(row);
+}
+
+/*** editor operations ***/
+
+// insert a char at position cursorX & cursorY
+void editorInsertChar(int c) {
+    // the cursor is on the tilde line after the end of the file, so we need to append a new row to the file before inserting a character there. 
+    if (E.cursorY == E.numrows) 
+        editorAppendRow("", 0);
+    editorRowInsertChar(&E.row[E.cursorY], E.cursorX, c);
+    E.cursorX++;    // move cursorX forward after inserting
+}
+
 /*** file i/o ***/
 
 void editorOpen(char *filename) {
@@ -500,6 +522,10 @@ void editorProcessKeypress() {
         case ARROW_LEFT:
         case ARROR_RIGHT:
             editorMoveCursor(c);
+            break;
+
+        default:
+            editorInsertChar(c);
             break;
     }
 }
