@@ -7,15 +7,17 @@
 # define _BSD_SOURCE
 # define _GNU_SOURCE
 
-# include <unistd.h>
-# include <termios.h>
-# include <stdlib.h>
 # include <ctype.h>
-# include <stdio.h>
 # include <errno.h>
+# include <stdio.h>
+# include <stdarg.h>
+# include <stdlib.h>
+# include <string.h>
 # include <sys/ioctl.h>
 # include <sys/types.h>
-# include <string.h>
+# include <termios.h>
+# include <time.h>
+# include <unistd.h>
 
 /*** defines ***/
 
@@ -92,6 +94,8 @@ struct editorConfig {
     int screenCols;
     int numrows;
     char *filename;
+    char statusmsg[80];
+    time_t statusmsg_time;
     erow *row;              // dynamically-allocated array of erow struct which contains each row's size and *chars
     struct termios original_termios;
 };
@@ -586,6 +590,16 @@ void editorDrawStatusBar(struct abuf *ab) {
         For example, you could specify all of these attributes using the command <esc>[1;4;5;7m. 
         An argument of 0 clears all attributes, and is the default argument, so we use <esc>[m to go back to normal text formatting.
     */
+    abAppend(ab, "\r\n", 2);
+}
+
+void editorDrawMessageBar(struct abuf *ab) {
+    abAppend(ab, "\x1b[K", 3);
+    int msglen = strlen(E.statusmsg);
+    if (msglen > E.screenCols)
+        msglen = E.screenCols;
+    if (msglen && time(NULL) - E.statusmsg_time < 5)
+        abAppend(ab, E.statusmsg, msglen);
 }
 
 void editorRefreshScreen() {
@@ -631,6 +645,9 @@ void editorRefreshScreen() {
     // draw status bar
     editorDrawStatusBar(&ab);               // status bar 
 
+    // draw status message
+    editorDrawMessageBar(&ab);              // status message
+
     char buf[32];
     snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cursorY - E.rowOffset + 1, E.renderX - E.colOffset + 1);  
     abAppend(&ab, buf, strlen(buf));        // string construction, reposition cursor command
@@ -642,21 +659,45 @@ void editorRefreshScreen() {
     abFree(&ab);                            // free memory
 }
 
+// status message
+void editorSetStatusMessage(const char *fmt, ...) {
+    /* 
+        The ... argument makes editorSetStatusMessage() a variadic function, meaning it can take any number of arguments.
+        https://en.wikipedia.org/wiki/Variadic_function
+
+        C’s way of dealing with these arguments is by having you call va_start() and va_end() on a value of type va_list. 
+        The last argument before the ... (in this case, fmt) must be passed to va_start(), 
+        so that the address of the next arguments is known. 
+        Then, between the va_start() and va_end() calls, 
+        you would call va_arg() and pass it the type of the next argument (which you usually get from the given format string) 
+        and it would return the value of that argument. 
+        In this case, we pass fmt and ap to vsnprintf() and it takes care of reading the format string and calling va_arg() to get each argument.
+    */
+    
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(E.statusmsg, sizeof(E.statusmsg), fmt, ap);
+    va_end(ap);
+    E.statusmsg_time = time(NULL);
+} 
+
 /*** init ***/
 
 void initEditor() {
     E.cursorX = 0;
     E.cursorY = 0;
     E.renderX = 0;
-    E.rowOffset = 0;    // default scrolled to the top of the file
+    E.rowOffset = 0;        // default scrolled to the top of the file
     E.colOffset = 0;
     E.numrows = 0;
     E.row = NULL;
     E.filename = NULL;
+    E.statusmsg[0] = '\0';  // no message will be displayed by default.
+    E.statusmsg_time = 0;
 
     if (getWindowSize(&E.screenRows, &E.screenCols) == -1)
         die("getWindowSize");
-    E.screenRows -= 1;
+    E.screenRows -= 2;      // make 2 lines for status bar and status message
 }
 
 int main(int argc, char *argv[]) {
@@ -669,6 +710,9 @@ int main(int argc, char *argv[]) {
     // file i/o for opening and reading a file from disk
     if (argc >= 2)
         editorOpen(argv[1]);
+
+    // status message
+    editorSetStatusMessage("HELP: Ctrl-Q (Q) = quit");
 
     //printf("%d %d", E.screenCols, E.screenRows);
 
